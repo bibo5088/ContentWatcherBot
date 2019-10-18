@@ -80,7 +80,7 @@ namespace ContentWatcherBot.Watchers
         }
 
         /// <summary>
-        /// Fetch content from the source
+        /// Fetch new content from the source and prepend UpdateMessage to them
         /// </summary>
         /// <returns>List of messages to send</returns>
         public async Task<IEnumerable<string>> CheckAndGetMessages()
