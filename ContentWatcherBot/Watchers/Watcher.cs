@@ -7,11 +7,11 @@ namespace ContentWatcherBot.Watchers
 {
     public abstract class Watcher
     {
-        private static HttpClient _httpClient = new HttpClient();
+        private static readonly HttpClient _httpClient = new HttpClient();
 
-        public virtual string Name { get; }
-        public virtual string Description { get; }
-        protected virtual string UpdateMessage { get; }
+        public abstract string Name { get; }
+        public abstract string Description { get; }
+        protected abstract string UpdateMessage { get; }
 
         private HashSet<string> _previousContentIds;
 
