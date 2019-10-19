@@ -10,6 +10,18 @@ namespace ContentWatcherBot.Watchers
     {
         private static readonly HttpClient HttpClient = new HttpClient();
 
+        /// <example>super_duper_webcomic</example>
+        public string Name { get; protected set; }
+
+        /// <example>Watch for new pages of Super Duper Webcomic</example>
+        public string Description { get; protected set; }
+
+        /// <summary>
+        /// Message that will be sent when new content shows up
+        /// </summary>
+        /// <example>New page of Super Duper Webcomic !</example>
+        public string UpdateMessage { get; protected set; }
+
         /// <summary>
         /// Previous fetched IDs, used to detect new content
         /// </summary>
@@ -18,7 +30,7 @@ namespace ContentWatcherBot.Watchers
         /// <summary>
         /// Fetch content from source and fill _previousContentIds, should always be called after initialization
         /// </summary>
-        public async Task FillPreviousContentId()
+        public async Task FirstFetch()
         {
             var content = await FetchContent(HttpClient);
 
@@ -50,6 +62,15 @@ namespace ContentWatcherBot.Watchers
             }
 
             return newContentKeys.Select(key => content[key]);
+        }
+
+        /// <summary>
+        /// Fetch new content from the source and prepend UpdateMessage to them
+        /// </summary>
+        /// <returns>List of messages to send</returns>
+        public async Task<IEnumerable<string>> CheckAndGetMessages()
+        {
+            return (await NewContent()).Select(content => $"{UpdateMessage}\n${content}");
         }
     }
 }
