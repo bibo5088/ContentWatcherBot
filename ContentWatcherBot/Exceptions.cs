@@ -15,6 +15,12 @@ namespace ContentWatcherBot
 
     public class FetchFailedException : Exception
     {
-        
+        public FetchFailedException() : base("Failed to fetch content")
+        {
+        }
+
+        public FetchFailedException(string message) : base(message)
+        {
+        }
     }
 }
