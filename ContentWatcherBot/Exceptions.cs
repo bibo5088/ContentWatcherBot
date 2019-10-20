@@ -13,6 +13,18 @@ namespace ContentWatcherBot
         }
     }
 
+
+    public class InvalidWatcherArgumentException : Exception
+    {
+        public InvalidWatcherArgumentException() : base("Invalid argument")
+        {
+        }
+
+        public InvalidWatcherArgumentException(string message) : base(message)
+        {
+        }
+    }
+
     public class FetchFailedException : Exception
     {
         public FetchFailedException() : base("Failed to fetch content")
@@ -20,6 +32,10 @@ namespace ContentWatcherBot
         }
 
         public FetchFailedException(string message) : base(message)
+        {
+        }
+
+        public FetchFailedException(string message, Exception innerException) : base(message, innerException)
         {
         }
     }

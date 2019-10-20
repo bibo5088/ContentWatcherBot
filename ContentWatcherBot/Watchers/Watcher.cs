@@ -8,7 +8,7 @@ namespace ContentWatcherBot.Watchers
 {
     public abstract class Watcher
     {
-        private static readonly HttpClient HttpClient = new HttpClient();
+        private static HttpClient HttpClient = new HttpClient();
 
         /// <example>super_duper_webcomic</example>
         public string Name { get; protected set; }
@@ -48,7 +48,7 @@ namespace ContentWatcherBot.Watchers
         /// Fetch content from the source and filters out already known content, updates _previousContentIds if new content is found 
         /// </summary>
         /// <returns>A list of new content</returns>
-        public async Task<IEnumerable<string>> NewContent()
+        private async Task<IEnumerable<string>> NewContent()
         {
             var content = await FetchContent(HttpClient);
 
@@ -70,7 +70,7 @@ namespace ContentWatcherBot.Watchers
         /// <returns>List of messages to send</returns>
         public async Task<IEnumerable<string>> CheckAndGetMessages()
         {
-            return (await NewContent()).Select(content => $"{UpdateMessage}\n${content}");
+            return (await NewContent()).Select(content => $"{UpdateMessage}\n{content}");
         }
     }
 }
