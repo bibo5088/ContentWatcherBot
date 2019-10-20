@@ -68,9 +68,9 @@ namespace ContentWatcherBot.Watchers
         /// Fetch new content from the source and prepend UpdateMessage to them
         /// </summary>
         /// <returns>List of messages to send</returns>
-        public async Task<IEnumerable<string>> CheckAndGetMessages()
+        public async Task<string[]> CheckAndGetMessages()
         {
-            return (await NewContent()).Select(content => $"{UpdateMessage}\n{content}");
+            return (await NewContent()).Select(content => $"{UpdateMessage}\n{content}").ToArray();
         }
     }
 }

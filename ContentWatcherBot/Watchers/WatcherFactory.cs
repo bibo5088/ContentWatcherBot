@@ -21,16 +21,28 @@ namespace ContentWatcherBot.Watchers
             new Dictionary<string, WatcherCommand>
             {
                 //RssFeedWatcher
-                [RssFeedWatcher.ListName] = new WatcherCommand
+                ["rss_feed"] = new WatcherCommand
                 {
-                    Description = RssFeedWatcher.ListDescription,
+                    Description = "Watch an RSS feed",
                     HasArg = true,
                     ArgDescription = "Url of the RSS feed",
-                    CreateWatcher = (url) => new RssFeedWatcher(url)
+                    CreateWatcher = (arg) =>
+                    {
+                        if (!(Uri.TryCreate(arg, UriKind.Absolute, out var url)
+                              && (url.Scheme == Uri.UriSchemeHttp || url.Scheme == Uri.UriSchemeHttps)))
+                        {
+                            throw new InvalidWatcherArgumentException($"`{arg}` is not a valid url");
+                        }
+
+                        var name = $"rss_feed_{url}";
+                        var desc = $"Watch RSS feed {url}";
+                        var updateMessage = $"New content from {url.Host}";
+                        return new RssFeedWatcher(name, desc, updateMessage, url);
+                    }
                 }
             };
 
-        public static async Task<Watcher> CreateWatcher(string name, string? arg)
+        public static Watcher CreateWatcher(string name, string? arg)
         {
             if (!WatcherCommands.TryGetValue(name, out var command))
             {
@@ -43,8 +55,6 @@ namespace ContentWatcherBot.Watchers
             }
 
             var watcher = command.CreateWatcher(arg ?? "");
-            
-            await watcher.FirstFetch();
 
             return watcher;
         }

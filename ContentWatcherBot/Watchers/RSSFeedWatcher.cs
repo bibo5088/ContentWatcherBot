@@ -10,28 +10,12 @@ namespace ContentWatcherBot.Watchers
     /// <inheritdoc />
     public class RssFeedWatcher : Watcher
     {
-        public const string ListName = "rss_feed";
-        public const string ListDescription = "Watch an RSS feed";
 
         private readonly Uri _url;
 
-        public RssFeedWatcher(string url)
+        public RssFeedWatcher(string name, string description, string updateMessage, Uri url)
         {
-            if (!(Uri.TryCreate(url, UriKind.Absolute, out _url)
-                && (_url.Scheme == Uri.UriSchemeHttp || _url.Scheme == Uri.UriSchemeHttps)))
-            {
-                throw new InvalidWatcherArgumentException($"`{url}` is not a valid url");
-            }
-
-
-            Name = $"rss_feed_{url}";
-            Description = $"Watching RSS feed : {url}";
-            UpdateMessage = $"New content from {_url.Host}";
-        }
-
-        public RssFeedWatcher(string name, string description, string updateMessage, string url)
-        {
-            _url = new Uri(url);
+            _url = url;
             Name = name;
             Description = description;
             UpdateMessage = updateMessage;

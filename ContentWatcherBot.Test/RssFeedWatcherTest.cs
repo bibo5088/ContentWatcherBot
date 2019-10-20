@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ContentWatcherBot.Test.MockResponses;
@@ -28,7 +29,7 @@ namespace ContentWatcherBot.Test
             Helpers.MockWatcherHttpClient(mockHttp);
 
             //Watcher
-            var watcher = new RssFeedWatcher("http://rss.com/feed");
+            var watcher = new RssFeedWatcher("", "", "New content from rss.com", new Uri("http://rss.com/feed"));
             await watcher.FirstFetch();
 
             //No message
@@ -37,15 +38,6 @@ namespace ContentWatcherBot.Test
             //One message
             var messages = await watcher.CheckAndGetMessages();
             Assert.AreEqual("New content from rss.com\nhttp://www.example.org/actu2", messages.First());
-        }
-
-        [Test]
-        public void InvalidUrl()
-        {
-            Assert.Throws<InvalidWatcherArgumentException>(() =>
-            {
-                new RssFeedWatcher("ftp://r dqdq 4 dqss@m/fe74eaéé%ed");
-            });
         }
 
         [Test]
@@ -59,7 +51,7 @@ namespace ContentWatcherBot.Test
 
             var e = Assert.ThrowsAsync<FetchFailedException>(async () =>
             {
-                var watcher = new RssFeedWatcher("http://not-rss.com/feed");
+                var watcher = new RssFeedWatcher("", "", "", new Uri("http://not-rss.com/feed"));
                 await watcher.FirstFetch();
             });
 
