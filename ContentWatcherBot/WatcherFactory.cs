@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ContentWatcherBot.Database;
 
-namespace ContentWatcherBot.Watchers
+/*namespace ContentWatcherBot.Watchers
 {
     public struct WatcherCommand
     {
@@ -59,4 +60,4 @@ namespace ContentWatcherBot.Watchers
             return watcher;
         }
     }
-}
+}*/

@@ -1,5 +1,5 @@
 using System.Reflection;
-using ContentWatcherBot.Watchers;
+using ContentWatcherBot.Database;
 using RichardSzalay.MockHttp;
 
 namespace ContentWatcherBot.Test
