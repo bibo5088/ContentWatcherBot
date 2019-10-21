@@ -22,17 +22,19 @@ namespace ContentWatcherBot.Database
 
         public string Title { get; private set; }
         public string Description { get; private set; }
-
-        public Watcher(FetcherType type, string param)
-        {
-            Type = type;
-            Param = param;
-        }
+        
+        public List<ServerWatcher> ServerWatchers { get; set; }
 
         /// <summary>
         /// Previous fetched IDs, used to detect new content
         /// </summary>
         public HashSet<string> PreviousContentIds { get; private set; }
+        
+        public Watcher(FetcherType type, string param)
+        {
+            Type = type;
+            Param = param;
+        }
 
         private IFetcher GetFetcher()
         {
