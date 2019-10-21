@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using ContentWatcherBot.Database;
+using ContentWatcherBot.Fetcher;
 
-/*namespace ContentWatcherBot.Watchers
+namespace ContentWatcherBot
 {
     public struct WatcherCommand
     {
@@ -18,28 +18,15 @@ using ContentWatcherBot.Database;
 
     public static class WatcherFactory
     {
-        private static readonly Dictionary<string, WatcherCommand> WatcherCommands =
+        public static readonly Dictionary<string, WatcherCommand> WatcherCommands =
             new Dictionary<string, WatcherCommand>
             {
-                //RssFeedWatcher
                 ["rss_feed"] = new WatcherCommand
                 {
                     Description = "Watch an RSS feed",
                     HasArg = true,
                     ArgDescription = "Url of the RSS feed",
-                    CreateWatcher = (arg) =>
-                    {
-                        if (!(Uri.TryCreate(arg, UriKind.Absolute, out var url)
-                              && (url.Scheme == Uri.UriSchemeHttp || url.Scheme == Uri.UriSchemeHttps)))
-                        {
-                            throw new InvalidWatcherArgumentException($"`{arg}` is not a valid url");
-                        }
-
-                        var name = $"rss_feed_{url}";
-                        var desc = $"Watch RSS feed {url}";
-                        var updateMessage = $"New content from {url.Host}";
-                        return new RssFeedWatcher(name, desc, updateMessage, url);
-                    }
+                    CreateWatcher = (arg) => new Watcher(FetcherType.RssFeed, arg)
                 }
             };
 
@@ -60,4 +47,4 @@ using ContentWatcherBot.Database;
             return watcher;
         }
     }
-}*/
+}

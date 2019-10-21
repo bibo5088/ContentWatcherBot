@@ -13,9 +13,8 @@ namespace ContentWatcherBot.Database
         private static HttpClient HttpClient = new HttpClient();
 
         [NotMapped] private IFetcher _fetcher = null;
-        
+
         public int Id { get; set; }
-        public string Name { get; private set; }
 
         public FetcherType Type { get; private set; }
 
@@ -23,6 +22,12 @@ namespace ContentWatcherBot.Database
 
         public string Title { get; private set; }
         public string Description { get; private set; }
+
+        public Watcher(FetcherType type, string param)
+        {
+            Type = type;
+            Param = param;
+        }
 
         /// <summary>
         /// Previous fetched IDs, used to detect new content
@@ -56,7 +61,7 @@ namespace ContentWatcherBot.Database
         /// Fetch content from the source and filters out already known content, updates _previousContentIds if new content is found 
         /// </summary>
         /// <returns>A list of new content</returns>
-        private async Task<IEnumerable<string>> NewContent()
+        public async Task<IEnumerable<string>> NewContent()
         {
             var content = await FetchContent(HttpClient);
 
@@ -71,5 +76,30 @@ namespace ContentWatcherBot.Database
 
             return newContentKeys.Select(key => content[key]);
         }
+
+        #region Equality
+
+        protected bool Equals(Watcher other)
+        {
+            return Type == other.Type && Param == other.Param;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Watcher) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((int) Type * 397) ^ (Param != null ? Param.GetHashCode() : 0);
+            }
+        }
+
+        #endregion
     }
 }

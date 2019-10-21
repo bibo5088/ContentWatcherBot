@@ -18,26 +18,33 @@ namespace ContentWatcherBot.Fetcher
 
         public async Task<FetchResult> FetchContent(HttpClient client)
         {
-            using var rss = await client.GetAsync(_url);
-            var doc = new XmlDocument();
-            doc.LoadXml(await rss.Content.ReadAsStringAsync());
+            try
+            {
+                using var rss = await client.GetAsync(_url);
+                var doc = new XmlDocument();
+                doc.LoadXml(await rss.Content.ReadAsStringAsync());
 
-            var channel = doc["rss"]["channel"];
+                var channel = doc["rss"]["channel"];
 
-            //Title
-            var title = channel["title"]?.InnerText ?? _url.ToString();
+                //Title
+                var title = channel["title"]?.InnerText ?? _url.ToString();
 
-            //Description
-            var description = channel["description"]?.InnerText ?? $"RSS feed {_url}";
+                //Description
+                var description = channel["description"]?.InnerText ?? $"RSS feed {_url}";
 
-            //Content
-            var items = channel.GetElementsByTagName("item");
+                //Content
+                var items = channel.GetElementsByTagName("item");
 
-            var content = items.Cast<XmlNode>()
-                .ToDictionary(node => node["pubDate"]?.InnerText ?? node["title"].InnerText,
-                    node => node["link"].InnerText);
+                var content = items.Cast<XmlNode>()
+                    .ToDictionary(node => node["pubDate"]?.InnerText ?? node["title"].InnerText,
+                        node => node["link"].InnerText);
 
-            return new FetchResult(title, description, content);
+                return new FetchResult(title, description, content);
+            }
+            catch
+            {
+                throw new FetchFailedException($"Unable to fetch content from {_url}");
+            }
         }
     }
 }

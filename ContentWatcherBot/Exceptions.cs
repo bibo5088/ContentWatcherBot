@@ -12,8 +12,7 @@ namespace ContentWatcherBot
         {
         }
     }
-
-
+    
     public class InvalidWatcherArgumentException : Exception
     {
         public InvalidWatcherArgumentException() : base("Invalid argument")
