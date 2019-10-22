@@ -10,53 +10,38 @@ namespace ContentWatcherBot.Database
 {
     public class Watcher
     {
-        private static HttpClient HttpClient = new HttpClient();
-
-        [NotMapped] private IFetcher _fetcher = null;
-
         public int Id { get; set; }
 
         public FetcherType Type { get; private set; }
 
-        public string Param { get; private set; }
+        public Uri Url { get; private set; }
 
         public string Title { get; private set; }
         public string Description { get; private set; }
 
-        public List<ServerWatcher> ServerWatchers { get; set; }
+        public List<ServerWatcher> ServerWatchers { get; private set; }
 
         /// <summary>
         /// Previous fetched IDs, used to detect new content
         /// </summary>
         public HashSet<string> PreviousContentIds { get; private set; }
 
-        public Watcher(FetcherType type, string param)
+        public Watcher(FetcherType type, Uri url, string title, string description,
+            HashSet<string> previousContentIds)
         {
             Type = type;
-            Param = param;
+            Url = url;
+            Title = title;
+            Description = description;
+            PreviousContentIds = previousContentIds;
         }
 
-        private IFetcher GetFetcher()
+        private async Task<Dictionary<string, string>> FetchContent()
         {
-            return _fetcher ??= FetcherFactory.CreateFetcher(Type, Param);
-        }
-
-        private async Task<Dictionary<string, string>> FetchContent(HttpClient httpClient)
-        {
-            var result = await GetFetcher().FetchContent(httpClient);
+            var result = await Fetchers.Fetch(Type, Url);
             Title = result.Title;
             Description = result.Description;
             return result.Content;
-        }
-
-        /// <summary>
-        /// Fetch content from source and fill _previousContentIds, should always be called after initialization
-        /// </summary>
-        public async Task FirstFetch()
-        {
-            var content = await FetchContent(HttpClient);
-
-            PreviousContentIds = content.Keys.ToHashSet();
         }
 
         /// <summary>
@@ -65,7 +50,7 @@ namespace ContentWatcherBot.Database
         /// <returns>A list of new content</returns>
         public async Task<IEnumerable<string>> NewContent()
         {
-            var content = await FetchContent(HttpClient);
+            var content = await FetchContent();
 
             //Filter out previous content
             var newContentKeysEnumerable = content.Keys.Except(PreviousContentIds);
