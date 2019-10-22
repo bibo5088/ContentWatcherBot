@@ -355,4 +355,4 @@ MigrationBackup/
 
 # End of https://www.gitignore.io/api/csharp
 .idea/
-ContentWatcherBot/database.sqlite
+**/database.sqlite

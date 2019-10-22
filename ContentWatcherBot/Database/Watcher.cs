@@ -22,14 +22,14 @@ namespace ContentWatcherBot.Database
 
         public string Title { get; private set; }
         public string Description { get; private set; }
-        
+
         public List<ServerWatcher> ServerWatchers { get; set; }
 
         /// <summary>
         /// Previous fetched IDs, used to detect new content
         /// </summary>
         public HashSet<string> PreviousContentIds { get; private set; }
-        
+
         public Watcher(FetcherType type, string param)
         {
             Type = type;
@@ -78,30 +78,5 @@ namespace ContentWatcherBot.Database
 
             return newContentKeys.Select(key => content[key]);
         }
-
-        #region Equality
-
-        protected bool Equals(Watcher other)
-        {
-            return Type == other.Type && Param == other.Param;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((Watcher) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return ((int) Type * 397) ^ (Param != null ? Param.GetHashCode() : 0);
-            }
-        }
-
-        #endregion
     }
 }
