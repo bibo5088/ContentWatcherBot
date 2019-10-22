@@ -26,7 +26,7 @@ namespace ContentWatcherBot.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Type = table.Column<int>(nullable: false),
-                    Param = table.Column<string>(nullable: true),
+                    Url = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     PreviousContentIds = table.Column<string>(nullable: true)

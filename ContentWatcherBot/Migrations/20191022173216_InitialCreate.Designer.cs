@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ContentWatcherBot.Migrations
 {
     [DbContext(typeof(WatcherContext))]
-    [Migration("20191021154624_InitialCreate")]
+    [Migration("20191022173216_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -68,9 +68,6 @@ namespace ContentWatcherBot.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Param")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("PreviousContentIds")
                         .HasColumnType("TEXT");
 
@@ -79,6 +76,9 @@ namespace ContentWatcherBot.Migrations
 
                     b.Property<int>("Type")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
@@ -41,12 +42,12 @@ namespace ContentWatcherBot.Test
                 .Respond("application/rss+xml", ExampleRssFeed1Xml.Value);
             Helpers.MockWatcherHttpClient(mockHttp);
 
-            await _context.AddWatcher(WatcherFactory.CreateWatcher("rss_feed", "http://rss.com/feed"));
+            await _context.AddWatcher(new Uri("http://rss.com/feed"));
 
             Assert.AreEqual(1, _context.Watchers.Count());
 
             //Add the same
-            await _context.AddWatcher(WatcherFactory.CreateWatcher("rss_feed", "http://rss.com/feed"));
+            await _context.AddWatcher(new Uri("http://rss.com/feed"));
 
             Assert.AreEqual(1, _context.Watchers.Count());
         }
@@ -64,7 +65,7 @@ namespace ContentWatcherBot.Test
                 .Respond("application/rss+xml", ExampleRssFeed2Xml.Value);
             Helpers.MockWatcherHttpClient(mockHttp);
 
-            var watcher = await _context.AddWatcher(WatcherFactory.CreateWatcher("rss_feed", "http://rss.com/feed"));
+            var watcher = await _context.AddWatcher(new Uri("http://rss.com/feed"));
 
             //Server
             var server = new Server {DiscordId = 123};

@@ -17,10 +17,10 @@ namespace ContentWatcherBot.Test
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.Expect("http://rss.com/feed")
                 .Respond("application/rss+xml", ExampleRssFeed1Xml.Value);
+            Helpers.MockWatcherHttpClient(mockHttp);
 
             //Fetcher
-            var fetcher = new RssFeedFetcher(new Uri("http://rss.com/feed"));
-            var result = await fetcher.FetchContent(mockHttp.ToHttpClient());
+            var result = await Fetchers.RssFeedFetcher.FetchContent(new Uri("http://rss.com/feed"));
 
             //Title
             Assert.AreEqual("Mon site", result.Title);
@@ -33,31 +33,6 @@ namespace ContentWatcherBot.Test
             Assert.Contains("Sat, 07 Sep 2002 00:00:01 GMT", result.Content.Keys);
             Assert.Contains("http://www.example.org/actu1", result.Content.Values);
         }
-
-        [Test]
-        public void RssFeedFetcherInvalidUrl()
-        {
-            //Invalid url test
-            var e = Assert.Throws<InvalidWatcherArgumentException>(() =>
-                FetcherFactory.CreateFetcher(FetcherType.RssFeed, "ftp: dqs9dq \"dqq54&&&"));
-
-            Assert.AreEqual("`ftp: dqs9dq \"dqq54&&&` is not a valid url", e.Message);
-        }
-
-        [Test]
-        public void RssFeedFetcherInvalidFeed()
-        {
-            var mockHttp = new MockHttpMessageHandler();
-            mockHttp.Expect("not-a-feed.com")
-                .Respond("application/json", @"{""hello"":""world""");
-
-            var e = Assert.ThrowsAsync<FetchFailedException>(async () =>
-            {
-                var fetcher = FetcherFactory.CreateFetcher(FetcherType.RssFeed, "http://not-a-feed.com");
-                await fetcher.FetchContent(mockHttp.ToHttpClient());
-            });
-
-            Assert.AreEqual("Unable to fetch content from http://not-a-feed.com/", e.Message);
-        }
+        
     }
 }

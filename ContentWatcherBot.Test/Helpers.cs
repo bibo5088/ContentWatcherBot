@@ -1,5 +1,6 @@
 using System.Reflection;
 using ContentWatcherBot.Database;
+using ContentWatcherBot.Fetcher;
 using RichardSzalay.MockHttp;
 
 namespace ContentWatcherBot.Test
@@ -8,7 +9,7 @@ namespace ContentWatcherBot.Test
     {
         public static void MockWatcherHttpClient(MockHttpMessageHandler mock)
         {
-            var field = typeof(Watcher).GetField("HttpClient", BindingFlags.NonPublic | BindingFlags.Static);
+            var field = typeof(Fetchers).GetField("_httpClient",  BindingFlags.NonPublic | BindingFlags.Static);
             field.SetValue(null, mock.ToHttpClient());
         }
     }

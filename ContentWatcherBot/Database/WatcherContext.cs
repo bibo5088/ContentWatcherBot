@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using ContentWatcherBot.Fetcher;
 using Microsoft.EntityFrameworkCore;
 using ChannelMessages = System.Collections.Generic.IDictionary<ulong, System.Collections.Generic.IEnumerable<string>>;
 
@@ -41,21 +42,20 @@ namespace ContentWatcherBot.Database
                         new JsonSerializerOptions {IgnoreNullValues = true}));
         }
 
-        public async Task<Watcher> AddWatcher(Watcher watcher)
+        public async Task<Watcher> AddWatcher(Uri url)
         {
-            var alreadyExistingWatcher =
-                await Watchers.SingleOrDefaultAsync(w => w.Type == watcher.Type && w.Param == watcher.Param);
+            var alreadyExistingWatcher = await Watchers.SingleOrDefaultAsync(w => w.Url == url);
 
             if (alreadyExistingWatcher != null) return alreadyExistingWatcher;
 
-            //Add watcher to db
-            await watcher.FirstFetch();
-            Watchers.Add(watcher);
-
+            //Create new watcher
+            var watcher = await WatcherFactory.CreateWatcher(url);
+            await Watchers.AddAsync(watcher);
             await SaveChangesAsync();
 
             return watcher;
         }
+
 
         public async Task<ConcurrentDictionary<ulong, List<string>>> GetNewContentMessages()
         {

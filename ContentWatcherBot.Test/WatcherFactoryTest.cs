@@ -1,5 +1,7 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using ContentWatcherBot.Database;
 using ContentWatcherBot.Test.MockResponses;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
@@ -27,9 +29,8 @@ namespace ContentWatcherBot.Test
             Helpers.MockWatcherHttpClient(mockHttp);
 
             //Watcher
-            var watcher = WatcherFactory.CreateWatcher("rss_feed", "http://rss.com/feed");
-            await watcher.FirstFetch();
-
+            var watcher = await WatcherFactory.CreateWatcher(new Uri("http://rss.com/feed"));
+            
             Assert.AreEqual("Mon site", watcher.Title);
             Assert.AreEqual("Ceci est un exemple de flux RSS 2.0", watcher.Description);
 

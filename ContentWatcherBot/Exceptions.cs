@@ -1,40 +1,44 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace ContentWatcherBot
 {
-    public class InvalidWatcherNameException : Exception
+    public class ReportableExceptions : Exception
     {
-    }
-
-    public class MissingWatcherArgumentException : Exception
-    {
-        public MissingWatcherArgumentException(string argDesc) : base($"Missing argument : {argDesc}")
-        {
-        }
-    }
-    
-    public class InvalidWatcherArgumentException : Exception
-    {
-        public InvalidWatcherArgumentException() : base("Invalid argument")
+        public ReportableExceptions()
         {
         }
 
-        public InvalidWatcherArgumentException(string message) : base(message)
+        protected ReportableExceptions(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+
+        public ReportableExceptions(string message) : base(message)
+        {
+        }
+
+        public ReportableExceptions(string message, Exception innerException) : base(message, innerException)
         {
         }
     }
 
-    public class FetchFailedException : Exception
+    public class UnknownWatcherUrl : Exception
     {
-        public FetchFailedException() : base("Failed to fetch content")
+        public UnknownWatcherUrl(Uri url) : base($"Unable to watch {url}")
         {
         }
+    }
 
-        public FetchFailedException(string message) : base(message)
+    public class ServerOnlyCommand : ReportableExceptions
+    {
+        public ServerOnlyCommand() : base("This command can only be used from a server")
         {
         }
+    }
 
-        public FetchFailedException(string message, Exception innerException) : base(message, innerException)
+    public class AdminOnlyCommand : ReportableExceptions
+    {
+        public AdminOnlyCommand() : base("This command can only be used by admins")
         {
         }
     }
