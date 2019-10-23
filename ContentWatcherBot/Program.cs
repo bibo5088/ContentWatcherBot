@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using ContentWatcherBot.Database;
 using ContentWatcherBot.Discord;
 using Discord;
 using Discord.Commands;
@@ -22,8 +23,35 @@ namespace ContentWatcherBot
             await commandHandler.Setup();
 
             await client.StartAsync();
+            
+            Console.WriteLine("Bot is ready");
 
-            await Task.Delay(-1);
+            await WatchLoop(client);
+        }
+
+        private static async Task WatchLoop(BaseSocketClient client)
+        {
+            while (true)
+            {
+                await Task.Delay(1000 * 60 * 60); //1 Minute
+
+                await using var context = new WatcherContext();
+                var channelMessages = await context.GetNewContentMessages();
+
+                foreach (var channelId in channelMessages.Keys)
+                {
+                    var channel = (ISocketMessageChannel) client.GetChannel(channelId);
+
+                    //Ignore if channel is null
+                    if (channel == null) continue;
+
+                    //Send messages
+                    foreach (var message in channelMessages[channelId])
+                    {
+                        await channel.SendMessageAsync(message);
+                    }
+                }
+            }
         }
     }
 }

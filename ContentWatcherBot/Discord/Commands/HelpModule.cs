@@ -17,33 +17,27 @@ namespace ContentWatcherBot.Discord.Commands
         }
 
         [Command("help")]
+        [Summary("List of all the commands")]
         public async Task HelpAsync()
         {
-            string prefix = Environment.GetEnvironmentVariable("PREFIX");
-            var builder = new EmbedBuilder()
-            {
-                Color = new Color(114, 137, 218),
-                Description = "These are the commands you can use"
-            };
+            var prefix = Environment.GetEnvironmentVariable("PREFIX");
+            var builder = new EmbedBuilder();
 
             foreach (var module in _service.Modules)
             {
-                string description = null;
                 foreach (var cmd in module.Commands)
                 {
-                    var result = await cmd.CheckPreconditionsAsync(Context);
-                    if (result.IsSuccess)
-                        description += $"{prefix}{cmd.Aliases.First()}\n";
-                }
-
-                if (!string.IsNullOrWhiteSpace(description))
-                {
-                    builder.AddField(x =>
+                    if ((await cmd.CheckPreconditionsAsync(Context)).IsSuccess)
                     {
-                        x.Name = module.Name;
-                        x.Value = description;
-                        x.IsInline = false;
-                    });
+                        var paramsDesc = cmd.Parameters.Aggregate("", (current, param) => current + $" [{param.Name}]");
+
+                        builder.AddField(x =>
+                        {
+                            x.Name = $"{prefix}{cmd.Aliases.First()}{paramsDesc}";
+                            x.Value = cmd.Summary;
+                            x.IsInline = false;
+                        });
+                    }
                 }
             }
 
@@ -51,6 +45,7 @@ namespace ContentWatcherBot.Discord.Commands
         }
 
         [Command("help")]
+        [Summary("More info on a command")]
         public async Task HelpAsync(string command)
         {
             var result = _service.Search(Context, command);
