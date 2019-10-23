@@ -13,8 +13,8 @@ namespace ContentWatcherBot.Database
     public class WatcherContext : DbContext
     {
         public DbSet<Watcher> Watchers { get; set; }
-        public DbSet<Server> Servers { get; set; }
-        public DbSet<ServerWatcher> ServerWatchers { get; set; }
+        public DbSet<Guild> Guilds { get; set; }
+        public DbSet<GuildWatcher> GuildWatchers { get; set; }
 
         public WatcherContext()
         {
@@ -44,46 +44,40 @@ namespace ContentWatcherBot.Database
 
         public async Task<Watcher> AddWatcher(Uri url)
         {
-            var alreadyExistingWatcher = await Watchers.SingleOrDefaultAsync(w => w.Url == url);
+            return await Watchers.SingleOrCreateAsync(w => w.Url == url, async () =>
+            {
+                var watcher = await WatcherFactory.CreateWatcher(url);
+                await Watchers.AddAsync(watcher);
+                await SaveChangesAsync();
 
-            if (alreadyExistingWatcher != null) return alreadyExistingWatcher;
-
-            //Create new watcher
-            var watcher = await WatcherFactory.CreateWatcher(url);
-            await Watchers.AddAsync(watcher);
-            await SaveChangesAsync();
-
-            return watcher;
+                return watcher;
+            });
         }
 
-        public async Task<Server> AddServer(ulong discordId)
+        public async Task<Guild> AddServer(ulong discordId)
         {
-            var alreadyExistingServer = await Servers.SingleOrDefaultAsync(s => s.DiscordId == discordId);
+            return await Guilds.SingleOrCreateAsync(s => s.GuildId == discordId, async () =>
+            {
+                var guild = new Guild {GuildId = discordId};
+                await Guilds.AddAsync(guild);
+                await SaveChangesAsync();
 
-            if (alreadyExistingServer != null) return alreadyExistingServer;
-
-            //Create new server
-            var server = new Server {DiscordId = discordId};
-            await Servers.AddAsync(server);
-            await SaveChangesAsync();
-
-            return server;
+                return guild;
+            });
         }
 
-        public async Task<ServerWatcher> AddServerWatcher(Server server, Watcher watcher, ulong channelId)
+        public async Task<GuildWatcher> AddServerWatcher(Guild guild, Watcher watcher, ulong channelId)
         {
-            var alreadyExistingServerWatcher =
-                await ServerWatchers.SingleOrDefaultAsync(sw =>
-                    sw.ServerId == server.Id && sw.WatcherId == watcher.Id && sw.ChannelId == channelId);
+            return await GuildWatchers.SingleOrCreateAsync(sw =>
+                sw.ServerId == guild.Id && sw.WatcherId == watcher.Id && sw.ChannelId == channelId, async () =>
+            {
+                //Create new serverWatcher
+                var guildWatcher = new GuildWatcher {Guild = guild, Watcher = watcher, ChannelId = channelId};
+                await GuildWatchers.AddAsync(guildWatcher);
+                await SaveChangesAsync();
 
-            if (alreadyExistingServerWatcher != null) return alreadyExistingServerWatcher;
-
-            //Create new serverWatcher
-            var serverWatcher = new ServerWatcher {Server = server, Watcher = watcher, ChannelId = channelId};
-            await ServerWatchers.AddAsync(serverWatcher);
-            await SaveChangesAsync();
-
-            return serverWatcher;
+                return guildWatcher;
+            });
         }
 
 
@@ -97,7 +91,7 @@ namespace ContentWatcherBot.Database
                 {
                     var content = (await watcher.NewContent()).ToList();
 
-                    foreach (var channel in watcher.ServerWatchers.Select(s => s.ChannelId))
+                    foreach (var channel in watcher.GuildWatchers.Select(s => s.ChannelId))
                     {
                         result.AddOrUpdate(channel, content, (key, list) =>
                         {

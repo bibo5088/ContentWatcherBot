@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace ContentWatcherBot.Database
 {
-    public class Server
+    public class Guild
     {
         public int Id { get; set; }
 
-        public ulong DiscordId { get; set; }
+        public ulong GuildId { get; set; }
 
-        public List<ServerWatcher> ServerWatchers { get; set; }
+        public List<GuildWatcher> GuildWatchers { get; set; }
     }
 }

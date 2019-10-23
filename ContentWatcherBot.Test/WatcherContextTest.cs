@@ -22,9 +22,9 @@ namespace ContentWatcherBot.Test
 
             _context = new WatcherContext(options);
             //Empty tables
-            _context.Servers.RemoveRange(_context.Servers);
+            _context.Guilds.RemoveRange(_context.Guilds);
             _context.Watchers.RemoveRange(_context.Watchers);
-            _context.ServerWatchers.RemoveRange(_context.ServerWatchers);
+            _context.GuildWatchers.RemoveRange(_context.GuildWatchers);
 
             _context.SaveChanges();
         }
@@ -68,12 +68,12 @@ namespace ContentWatcherBot.Test
             var watcher = await _context.AddWatcher(new Uri("http://rss.com/feed"));
 
             //Server
-            var server = new Server {DiscordId = 123};
-            _context.Servers.Add(server);
+            var server = new Guild {GuildId = 123};
+            _context.Guilds.Add(server);
 
             //ServerWatcher
-            var serverWatcher = new ServerWatcher {Server = server, Watcher = watcher, ChannelId = 123};
-            _context.ServerWatchers.Add(serverWatcher);
+            var serverWatcher = new GuildWatcher {Guild = server, Watcher = watcher, ChannelId = 123};
+            _context.GuildWatchers.Add(serverWatcher);
 
             await _context.SaveChangesAsync();
 

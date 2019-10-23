@@ -19,7 +19,7 @@ namespace ContentWatcherBot.Database
         public string Title { get; private set; }
         public string Description { get; private set; }
 
-        public List<ServerWatcher> ServerWatchers { get; private set; }
+        public List<GuildWatcher> GuildWatchers { get; private set; }
 
         /// <summary>
         /// Previous fetched IDs, used to detect new content
