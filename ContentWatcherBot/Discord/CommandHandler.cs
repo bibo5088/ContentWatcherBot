@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
@@ -17,9 +18,12 @@ namespace ContentWatcherBot.Discord
             _client = client;
         }
 
-        public async Task InstallCommandsAsync()
+        public async Task Setup()
         {
             _client.MessageReceived += HandleCommandAsync;
+            _commands.CommandExecuted += OnCommandExecutedAsync;
+
+            _commands.AddTypeReader(typeof(Uri), new UriTypeReader());
 
             //Load commands
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), null);
@@ -40,13 +44,20 @@ namespace ContentWatcherBot.Discord
 
             var context = new SocketCommandContext(_client, message);
 
-            var result = await _commands.ExecuteAsync(context, argPos, null);
+            await _commands.ExecuteAsync(context, argPos, null);
+        }
 
-            //Error Reporting
+        private async Task OnCommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context,
+            IResult result)
+        {
             if (!result.IsSuccess && result.Error == CommandError.Exception && result is ExecuteResult execResult &&
                 execResult.Exception is ReportableExceptions e)
             {
                 await context.Channel.SendMessageAsync($":x:{e.Message}");
+            }
+            else if (!string.IsNullOrEmpty(result.ErrorReason))
+            {
+                await context.Channel.SendMessageAsync($":x:{result.ErrorReason}");
             }
         }
     }

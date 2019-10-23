@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using ContentWatcherBot.Database;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
@@ -9,19 +11,19 @@ namespace ContentWatcherBot.Discord.Commands
     {
         [Command("add")]
         [Summary("Add a watcher to your server")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireContext(ContextType.Guild)]
         public async Task SquareAsync([Summary("Url to watch")] Uri url,
             [Summary("The channel where the watcher will send messages")]
             SocketGuildChannel channel)
         {
-            if (!(Context.User is SocketGuildUser user))
-            {
-                throw new ServerOnlyCommand();
-            }
+            await using var context = new WatcherContext();
+            var watcher = await context.AddWatcher(url);
+            var server = await context.AddServer(Context.Guild.Id);
 
-            if (!user.GuildPermissions.Administrator)
-            {
-                throw new AdminOnlyCommand();
-            }
+            await context.AddServerWatcher(server, watcher, channel.Id);
+
+            await Context.Message.Channel.SendMessageAsync($"Watching <{url}> in channel <#{channel.Id}>");
         }
     }
 }

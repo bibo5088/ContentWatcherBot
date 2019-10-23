@@ -9,7 +9,7 @@ namespace ContentWatcherBot.Database
         public int ServerId { get; set; }
         public Server Server { get; set; }
 
-        public string WatcherId { get; set; }
+        public int WatcherId { get; set; }
         public Watcher Watcher { get; set; }
     }
 }

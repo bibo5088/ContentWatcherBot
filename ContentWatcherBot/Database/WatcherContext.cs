@@ -56,6 +56,36 @@ namespace ContentWatcherBot.Database
             return watcher;
         }
 
+        public async Task<Server> AddServer(ulong discordId)
+        {
+            var alreadyExistingServer = await Servers.SingleOrDefaultAsync(s => s.DiscordId == discordId);
+
+            if (alreadyExistingServer != null) return alreadyExistingServer;
+
+            //Create new server
+            var server = new Server {DiscordId = discordId};
+            await Servers.AddAsync(server);
+            await SaveChangesAsync();
+
+            return server;
+        }
+
+        public async Task<ServerWatcher> AddServerWatcher(Server server, Watcher watcher, ulong channelId)
+        {
+            var alreadyExistingServerWatcher =
+                await ServerWatchers.SingleOrDefaultAsync(sw =>
+                    sw.ServerId == server.Id && sw.WatcherId == watcher.Id && sw.ChannelId == channelId);
+
+            if (alreadyExistingServerWatcher != null) return alreadyExistingServerWatcher;
+
+            //Create new serverWatcher
+            var serverWatcher = new ServerWatcher {Server = server, Watcher = watcher, ChannelId = channelId};
+            await ServerWatchers.AddAsync(serverWatcher);
+            await SaveChangesAsync();
+
+            return serverWatcher;
+        }
+
 
         public async Task<ConcurrentDictionary<ulong, List<string>>> GetNewContentMessages()
         {

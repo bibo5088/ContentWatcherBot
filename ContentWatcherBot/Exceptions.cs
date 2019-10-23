@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using Discord.Commands;
 
 namespace ContentWatcherBot
 {
@@ -22,23 +23,9 @@ namespace ContentWatcherBot
         }
     }
 
-    public class UnknownWatcherUrl : Exception
+    public class UnknownWatcherUrl : ReportableExceptions
     {
         public UnknownWatcherUrl(Uri url) : base($"Unable to watch {url}")
-        {
-        }
-    }
-
-    public class ServerOnlyCommand : ReportableExceptions
-    {
-        public ServerOnlyCommand() : base("This command can only be used from a server")
-        {
-        }
-    }
-
-    public class AdminOnlyCommand : ReportableExceptions
-    {
-        public AdminOnlyCommand() : base("This command can only be used by admins")
         {
         }
     }

@@ -44,8 +44,7 @@ namespace ContentWatcherBot.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     ChannelId = table.Column<ulong>(nullable: false),
                     ServerId = table.Column<int>(nullable: false),
-                    WatcherId = table.Column<string>(nullable: true),
-                    WatcherId1 = table.Column<int>(nullable: true)
+                    WatcherId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -57,11 +56,11 @@ namespace ContentWatcherBot.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ServerWatchers_Watchers_WatcherId1",
-                        column: x => x.WatcherId1,
+                        name: "FK_ServerWatchers_Watchers_WatcherId",
+                        column: x => x.WatcherId,
                         principalTable: "Watchers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -70,9 +69,9 @@ namespace ContentWatcherBot.Migrations
                 column: "ServerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ServerWatchers_WatcherId1",
+                name: "IX_ServerWatchers_WatcherId",
                 table: "ServerWatchers",
-                column: "WatcherId1");
+                column: "WatcherId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
