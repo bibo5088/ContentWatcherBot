@@ -7,16 +7,16 @@ namespace ContentWatcherBot.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Servers",
+                name: "Guilds",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    DiscordId = table.Column<ulong>(nullable: false)
+                    GuildId = table.Column<ulong>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Servers", x => x.Id);
+                    table.PrimaryKey("PK_Guilds", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -27,6 +27,7 @@ namespace ContentWatcherBot.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Type = table.Column<int>(nullable: false),
                     Url = table.Column<string>(nullable: true),
+                    Param = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     PreviousContentIds = table.Column<string>(nullable: true)
@@ -37,26 +38,26 @@ namespace ContentWatcherBot.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ServerWatchers",
+                name: "GuildWatchers",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     ChannelId = table.Column<ulong>(nullable: false),
-                    ServerId = table.Column<int>(nullable: false),
+                    GuildId = table.Column<int>(nullable: false),
                     WatcherId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ServerWatchers", x => x.Id);
+                    table.PrimaryKey("PK_GuildWatchers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ServerWatchers_Servers_ServerId",
-                        column: x => x.ServerId,
-                        principalTable: "Servers",
+                        name: "FK_GuildWatchers_Guilds_GuildId",
+                        column: x => x.GuildId,
+                        principalTable: "Guilds",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ServerWatchers_Watchers_WatcherId",
+                        name: "FK_GuildWatchers_Watchers_WatcherId",
                         column: x => x.WatcherId,
                         principalTable: "Watchers",
                         principalColumn: "Id",
@@ -64,23 +65,23 @@ namespace ContentWatcherBot.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ServerWatchers_ServerId",
-                table: "ServerWatchers",
-                column: "ServerId");
+                name: "IX_GuildWatchers_GuildId",
+                table: "GuildWatchers",
+                column: "GuildId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ServerWatchers_WatcherId",
-                table: "ServerWatchers",
+                name: "IX_GuildWatchers_WatcherId",
+                table: "GuildWatchers",
                 column: "WatcherId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ServerWatchers");
+                name: "GuildWatchers");
 
             migrationBuilder.DropTable(
-                name: "Servers");
+                name: "Guilds");
 
             migrationBuilder.DropTable(
                 name: "Watchers");

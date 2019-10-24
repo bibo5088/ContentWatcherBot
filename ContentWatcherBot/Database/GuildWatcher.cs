@@ -6,7 +6,7 @@ namespace ContentWatcherBot.Database
 
         public ulong ChannelId { get; set; }
         
-        public int ServerId { get; set; }
+        public int GuildId { get; set; }
         public Guild Guild { get; set; }
 
         public int WatcherId { get; set; }

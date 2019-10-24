@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ContentWatcherBot.Fetcher;
+using Discord;
 
 namespace ContentWatcherBot.Database
 {
@@ -11,13 +12,13 @@ namespace ContentWatcherBot.Database
         {
             //RssWatcher
             var rssWatcher = await CreateRssWatcher(url);
-            if (rssWatcher != null) return rssWatcher;
+            if (rssWatcher.IsSpecified) return rssWatcher.Value;
 
             //Error
             throw new UnknownWatcherUrl(url);
         }
 
-        private static async Task<Watcher?> CreateRssWatcher(Uri url)
+        private static async Task<Optional<Watcher>> CreateRssWatcher(Uri url)
         {
             try
             {
@@ -28,7 +29,7 @@ namespace ContentWatcherBot.Database
             }
             catch
             {
-                return null;
+                return Optional<Watcher>.Unspecified;
             }
         }
     }

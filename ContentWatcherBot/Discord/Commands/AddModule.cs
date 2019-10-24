@@ -13,7 +13,7 @@ namespace ContentWatcherBot.Discord.Commands
         [Summary("Add a watcher to your server")]
         [RequireUserPermission(GuildPermission.Administrator)]
         [RequireContext(ContextType.Guild)]
-        public async Task SquareAsync([Summary("Url to watch")] Uri url,
+        public async Task AddAsync([Summary("Url to watch")] Uri url,
             [Summary("The channel where the watcher will send messages")]
             SocketGuildChannel channel)
         {

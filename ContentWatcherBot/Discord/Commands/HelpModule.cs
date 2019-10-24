@@ -6,7 +6,7 @@ using Discord.Commands;
 
 namespace ContentWatcherBot.Discord.Commands
 {
-    //Taken here https://github.com/Aux/Discord.Net-Example/blob/2.0/src/Modules/HelpModule.cs
+    //Taken here https://github.com/Aux/Discord.Net-Example/blob/2.0/src/Modules/HelpModule.cs and modified by me
     public class HelpModule : ModuleBase<SocketCommandContext>
     {
         private readonly CommandService _service;

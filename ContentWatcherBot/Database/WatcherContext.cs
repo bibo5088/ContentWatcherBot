@@ -69,7 +69,7 @@ namespace ContentWatcherBot.Database
         public async Task<GuildWatcher> AddServerWatcher(Guild guild, Watcher watcher, ulong channelId)
         {
             return await GuildWatchers.SingleOrCreateAsync(sw =>
-                sw.ServerId == guild.Id && sw.WatcherId == watcher.Id && sw.ChannelId == channelId, async () =>
+                sw.GuildId == guild.Id && sw.WatcherId == watcher.Id && sw.ChannelId == channelId, async () =>
             {
                 //Create new serverWatcher
                 var guildWatcher = new GuildWatcher {Guild = guild, Watcher = watcher, ChannelId = channelId};

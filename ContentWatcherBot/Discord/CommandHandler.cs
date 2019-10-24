@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using ContentWatcherBot.Discord.Commands;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -26,7 +27,9 @@ namespace ContentWatcherBot.Discord
             _commands.AddTypeReader(typeof(Uri), new UriTypeReader());
 
             //Load commands
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), null);
+            await _commands.AddModuleAsync<HelpModule>(null);
+            await _commands.AddModuleAsync<AddModule>(null);
+            await _commands.AddModuleAsync<ListModule>(null);
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
