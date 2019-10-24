@@ -5,14 +5,11 @@ using ContentWatcherBot.Database;
 using Discord;
 using Discord.Commands;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace ContentWatcherBot.Discord.Commands
 {
     public class ListModule : ModuleBase<SocketCommandContext>
     {
-        private const int DiscordMaxMessageLength = 2000;
-
         [Command("list")]
         [Summary("List every watcher active on this server")]
         [RequireContext(ContextType.Guild)]

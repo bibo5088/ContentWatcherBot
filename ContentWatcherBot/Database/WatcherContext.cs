@@ -108,7 +108,7 @@ namespace ContentWatcherBot.Database
             });
 
             //Execute tasks
-            var tasks = Watchers.AsEnumerable().Select(watcher => process(watcher));
+            var tasks = Watchers.Include(w => w.GuildWatchers).AsEnumerable().Select(watcher => process(watcher));
 
             await Task.WhenAll(tasks);
 

@@ -27,11 +27,12 @@ namespace ContentWatcherBot
             var uriBuilder = new UriBuilder(uri)
             {
                 Scheme = Uri.UriSchemeHttp,
+                Port = -1 //Default port
             };
 
             return uriBuilder.Uri;
         }
-        
+
         /// <see cref="http://stackoverflow.com/a/18987605"/>
         /// <summary>
         /// Splits an array into several smaller arrays.
@@ -42,7 +43,7 @@ namespace ContentWatcherBot
         /// <returns>An array containing smaller arrays.</returns>
         public static IEnumerable<IEnumerable<T>> Split<T>(this T[] array, int size)
         {
-            for (var i = 0; i < (float)array.Length / size; i++)
+            for (var i = 0; i < (float) array.Length / size; i++)
             {
                 yield return array.Skip(i * size).Take(size);
             }

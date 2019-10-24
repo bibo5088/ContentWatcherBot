@@ -33,7 +33,7 @@ namespace ContentWatcherBot
         {
             while (true)
             {
-                await Task.Delay(1000 * 60 * 60); //1 Minute
+                await Task.Delay(TimeSpan.FromMinutes(1)); //1 Minute
 
                 await using var context = new WatcherContext();
                 var channelMessages = await context.GetNewContentMessages();
