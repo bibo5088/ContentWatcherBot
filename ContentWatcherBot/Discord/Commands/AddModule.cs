@@ -10,7 +10,7 @@ namespace ContentWatcherBot.Discord.Commands
     public class AddModule : ModuleBase<SocketCommandContext>
     {
         [Command("add")]
-        [Summary("Add a watcher to your server")]
+        [Summary("Add a watcher to the server")]
         [RequireUserPermission(GuildPermission.Administrator)]
         [RequireContext(ContextType.Guild)]
         public async Task AddAsync([Summary("Url to watch")] Uri url,

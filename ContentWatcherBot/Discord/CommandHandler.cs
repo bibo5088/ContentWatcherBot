@@ -22,14 +22,14 @@ namespace ContentWatcherBot.Discord
         public async Task Setup()
         {
             _client.MessageReceived += HandleCommandAsync;
-            _commands.CommandExecuted += OnCommandExecutedAsync;
 
             _commands.AddTypeReader(typeof(Uri), new UriTypeReader());
 
             //Load commands
             await _commands.AddModuleAsync<HelpModule>(null);
-            await _commands.AddModuleAsync<AddModule>(null);
             await _commands.AddModuleAsync<ListModule>(null);
+            await _commands.AddModuleAsync<AddModule>(null);
+            await _commands.AddModuleAsync<RemoveModule>(null);
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
@@ -47,12 +47,9 @@ namespace ContentWatcherBot.Discord
 
             var context = new SocketCommandContext(_client, message);
 
-            await _commands.ExecuteAsync(context, argPos, null);
-        }
+            var result = await _commands.ExecuteAsync(context, argPos, null);
 
-        private async Task OnCommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context,
-            IResult result)
-        {
+            //Error reporting
             if (!result.IsSuccess && result.Error == CommandError.Exception && result is ExecuteResult execResult &&
                 execResult.Exception is ReportableExceptions e)
             {

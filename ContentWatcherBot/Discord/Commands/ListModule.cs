@@ -23,7 +23,7 @@ namespace ContentWatcherBot.Discord.Commands
             //Send default message if there is no watcher
             if (!guildWatchers.Any())
             {
-                await Context.Message.Channel.SendMessageAsync("There is no watcher active on this server");
+                await Context.Message.Channel.SendMessageAsync("There are no watchers active on this server");
                 return;
             }
 
