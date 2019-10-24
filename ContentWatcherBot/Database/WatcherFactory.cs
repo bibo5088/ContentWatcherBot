@@ -21,8 +21,9 @@ namespace ContentWatcherBot.Database
         {
             try
             {
-                var result = await Fetchers.RssFeedFetcher.FetchContent(url);
-                return new Watcher(FetcherType.RssFeed, url, result.Title, result.Description,
+                var param = url.ToString();
+                var result = await Fetchers.RssFeedFetcher.FetchContent(param);
+                return new Watcher(FetcherType.RssFeed, url.ToHttp(), param, result.Title, result.Description,
                     new HashSet<string>(result.Content.Keys));
             }
             catch

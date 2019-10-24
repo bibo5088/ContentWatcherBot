@@ -66,6 +66,9 @@ namespace ContentWatcherBot.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Param")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("PreviousContentIds")
                         .HasColumnType("TEXT");
 

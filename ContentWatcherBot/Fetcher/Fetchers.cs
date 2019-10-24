@@ -22,7 +22,7 @@ namespace ContentWatcherBot.Fetcher
 
     public interface IFetcher
     {
-        Task<FetchResult> FetchContent(Uri url);
+        Task<FetchResult> FetchContent(string param);
     }
 
     public enum FetcherType
@@ -42,9 +42,9 @@ namespace ContentWatcherBot.Fetcher
             [FetcherType.RssFeed] = RssFeedFetcher
         };
 
-        public static Task<FetchResult> Fetch(FetcherType type, Uri url)
+        public static Task<FetchResult> Fetch(FetcherType type, string param)
         {
-            return FetchersDict[type].FetchContent(url);
+            return FetchersDict[type].FetchContent(param);
         }
     }
 }

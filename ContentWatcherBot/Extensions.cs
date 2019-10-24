@@ -21,5 +21,15 @@ namespace ContentWatcherBot
         {
             return source.SingleOrDefault(predicate) ?? await creator();
         }
+
+        public static Uri ToHttp(this Uri uri)
+        {
+            var uriBuilder = new UriBuilder(uri)
+            {
+                Scheme = Uri.UriSchemeHttp,
+            };
+
+            return uriBuilder.Uri;
+        }
     }
 }

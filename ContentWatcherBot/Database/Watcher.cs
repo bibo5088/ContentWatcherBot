@@ -16,6 +16,8 @@ namespace ContentWatcherBot.Database
 
         public Uri Url { get; private set; }
 
+        public string Param { get; private set; }
+
         public string Title { get; private set; }
         public string Description { get; private set; }
 
@@ -26,11 +28,12 @@ namespace ContentWatcherBot.Database
         /// </summary>
         public HashSet<string> PreviousContentIds { get; private set; }
 
-        public Watcher(FetcherType type, Uri url, string title, string description,
+        public Watcher(FetcherType type, Uri url, string param, string title, string description,
             HashSet<string> previousContentIds)
         {
             Type = type;
             Url = url;
+            Param = param;
             Title = title;
             Description = description;
             PreviousContentIds = previousContentIds;
@@ -38,7 +41,7 @@ namespace ContentWatcherBot.Database
 
         private async Task<Dictionary<string, string>> FetchContent()
         {
-            var result = await Fetchers.Fetch(Type, Url);
+            var result = await Fetchers.Fetch(Type, Param);
             Title = result.Title;
             Description = result.Description;
             return result.Content;

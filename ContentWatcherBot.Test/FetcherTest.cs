@@ -20,7 +20,7 @@ namespace ContentWatcherBot.Test
             Helpers.MockWatcherHttpClient(mockHttp);
 
             //Fetcher
-            var result = await Fetchers.RssFeedFetcher.FetchContent(new Uri("http://rss.com/feed"));
+            var result = await Fetchers.RssFeedFetcher.FetchContent("http://rss.com/feed");
 
             //Title
             Assert.AreEqual("Mon site", result.Title);

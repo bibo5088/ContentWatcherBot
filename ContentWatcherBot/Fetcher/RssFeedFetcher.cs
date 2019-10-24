@@ -9,7 +9,7 @@ namespace ContentWatcherBot.Fetcher
 {
     public class RssFeedFetcher : IFetcher
     {
-        public async Task<FetchResult> FetchContent(Uri url)
+        public async Task<FetchResult> FetchContent(string url)
         {
             using var rss = await Fetchers.HttpClient.GetAsync(url);
             var doc = new XmlDocument();
@@ -18,7 +18,7 @@ namespace ContentWatcherBot.Fetcher
             var channel = doc["rss"]["channel"];
 
             //Title
-            var title = channel["title"]?.InnerText ?? url.ToString();
+            var title = channel["title"]?.InnerText ?? url;
 
             //Description
             var description = channel["description"]?.InnerText ?? $"RSS feed {url}";
