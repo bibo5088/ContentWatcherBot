@@ -19,9 +19,9 @@ namespace ContentWatcherBot.Discord.Commands
         {
             await using var context = new WatcherContext();
             var watcher = await context.AddWatcher(url);
-            var server = await context.AddServer(Context.Guild.Id);
+            var server = await context.AddGuild(Context.Guild.Id);
 
-            await context.AddServerWatcher(server, watcher, channel.Id);
+            await context.AddGuildWatcher(server, watcher, channel.Id);
 
             await Context.Message.Channel.SendMessageAsync($"Watching <{url}> in channel <#{channel.Id}>");
         }

@@ -67,13 +67,12 @@ namespace ContentWatcherBot.Test
 
             var watcher = await _context.AddWatcher(new Uri("http://rss.com/feed"));
 
-            //Server
-            var server = new Guild {GuildId = 123};
-            _context.Guilds.Add(server);
+            //Guild
+            var guild = new Guild {GuildId = 123};
+            _context.Guilds.Add(guild);
 
             //ServerWatcher
-            var serverWatcher = new GuildWatcher {Guild = server, Watcher = watcher, ChannelId = 123};
-            _context.GuildWatchers.Add(serverWatcher);
+            await _context.AddGuildWatcher(guild, watcher, 123);
 
             await _context.SaveChangesAsync();
 
@@ -81,10 +80,9 @@ namespace ContentWatcherBot.Test
 
             Assert.AreEqual(1, messages.Count);
             Assert.Contains(123, (ICollection) messages.Keys);
-            Assert.AreEqual("http://www.example.org/actu2", messages[123][0]);
+            Assert.AreEqual("New content from \"Mon site\"\nhttp://www.example.org/actu2", messages[123][0]);
         }
-
-
+        
         [TearDown]
         public void TearDown()
         {
