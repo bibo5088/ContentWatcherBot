@@ -66,13 +66,19 @@ namespace ContentWatcherBot.Database
             });
         }
 
-        public async Task<GuildWatcher> AddServerWatcher(Guild guild, Watcher watcher, ulong channelId)
+        public async Task<GuildWatcher> AddServerWatcher(Guild guild, Watcher watcher, ulong channelId,
+            string updateMessage = null)
         {
             return await GuildWatchers.SingleOrCreateAsync(sw =>
                 sw.GuildId == guild.Id && sw.WatcherId == watcher.Id && sw.ChannelId == channelId, async () =>
             {
                 //Create new serverWatcher
-                var guildWatcher = new GuildWatcher {Guild = guild, Watcher = watcher, ChannelId = channelId};
+                var guildWatcher = new GuildWatcher
+                {
+                    Guild = guild, Watcher = watcher,
+                    ChannelId = channelId,
+                    UpdateMessage = updateMessage ?? $"New content from \"{watcher.Title}\""
+                };
                 await GuildWatchers.AddAsync(guildWatcher);
                 await SaveChangesAsync();
 
