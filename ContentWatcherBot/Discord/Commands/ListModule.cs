@@ -44,7 +44,8 @@ namespace ContentWatcherBot.Discord.Commands
                 builder.AddField(new EmbedFieldBuilder
                 {
                     Name = $"{guildWatcher.Id} ({watcher.Type:G}) \"{watcher.Title}\"",
-                    Value = $"<#{guildWatcher.ChannelId}>\n{watcher.Description}"
+                    Value =
+                        $"{watcher.Description}\nUpdate Message : {guildWatcher.UpdateMessage}\n<#{guildWatcher.ChannelId}>"
                 });
             }
 
