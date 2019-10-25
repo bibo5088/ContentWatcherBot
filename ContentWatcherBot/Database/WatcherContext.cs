@@ -44,7 +44,7 @@ namespace ContentWatcherBot.Database
 
         public async Task<Watcher> AddWatcher(Uri url)
         {
-            return await Watchers.SingleOrCreateAsync(w => w.Url == url, async () =>
+            return await Watchers.SingleOrCreateAsync(w => w.Url.ToHttp() == url.ToHttp(), async () =>
             {
                 var watcher = await WatcherFactory.CreateWatcher(url);
                 await Watchers.AddAsync(watcher);
