@@ -2,14 +2,16 @@
 using ContentWatcherBot.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ContentWatcherBot.Migrations
 {
     [DbContext(typeof(WatcherContext))]
-    partial class WatcherContextModelSnapshot : ModelSnapshot
+    [Migration("20191025141608_FillUpdateMessage")]
+    partial class FillUpdateMessage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

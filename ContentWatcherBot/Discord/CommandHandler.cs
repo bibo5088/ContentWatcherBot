@@ -30,6 +30,7 @@ namespace ContentWatcherBot.Discord
             await _commands.AddModuleAsync<ListModule>(null);
             await _commands.AddModuleAsync<AddModule>(null);
             await _commands.AddModuleAsync<RemoveModule>(null);
+            await _commands.AddModuleAsync<SetModule>(null);
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)

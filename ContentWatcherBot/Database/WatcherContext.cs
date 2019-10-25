@@ -54,7 +54,7 @@ namespace ContentWatcherBot.Database
             });
         }
 
-        public async Task<Guild> AddServer(ulong discordId)
+        public async Task<Guild> AddGuild(ulong discordId)
         {
             return await Guilds.SingleOrCreateAsync(s => s.GuildId == discordId, async () =>
             {
@@ -66,13 +66,19 @@ namespace ContentWatcherBot.Database
             });
         }
 
-        public async Task<GuildWatcher> AddServerWatcher(Guild guild, Watcher watcher, ulong channelId)
+        public async Task<GuildWatcher> AddGuildWatcher(Guild guild, Watcher watcher, ulong channelId,
+            string updateMessage = null)
         {
             return await GuildWatchers.SingleOrCreateAsync(sw =>
                 sw.GuildId == guild.Id && sw.WatcherId == watcher.Id && sw.ChannelId == channelId, async () =>
             {
                 //Create new serverWatcher
-                var guildWatcher = new GuildWatcher {Guild = guild, Watcher = watcher, ChannelId = channelId};
+                var guildWatcher = new GuildWatcher
+                {
+                    Guild = guild, Watcher = watcher,
+                    ChannelId = channelId,
+                    UpdateMessage = updateMessage ?? $"New content from \"{watcher.Title}\""
+                };
                 await GuildWatchers.AddAsync(guildWatcher);
                 await SaveChangesAsync();
 
@@ -89,13 +95,16 @@ namespace ContentWatcherBot.Database
             {
                 try
                 {
-                    var content = (await watcher.NewContent()).ToList();
+                    var content = (await watcher.NewContent()).ToArray();
 
-                    foreach (var channel in watcher.GuildWatchers.Select(s => s.ChannelId))
+                    foreach (var guildWatcher in watcher.GuildWatchers)
                     {
-                        result.AddOrUpdate(channel, content, (key, list) =>
+                        //Add UpdateMessage
+                        var contentWithMessages = content.Select(c => $"{guildWatcher.UpdateMessage}\n{c}").ToList();
+
+                        result.AddOrUpdate(guildWatcher.ChannelId, contentWithMessages, (key, list) =>
                         {
-                            list.AddRange(content);
+                            list.AddRange(contentWithMessages);
                             return list;
                         });
                     }
@@ -112,6 +121,7 @@ namespace ContentWatcherBot.Database
 
             await Task.WhenAll(tasks);
 
+            //Save previousIds
             await SaveChangesAsync();
 
             return result;
