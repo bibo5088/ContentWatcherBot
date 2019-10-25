@@ -112,6 +112,8 @@ namespace ContentWatcherBot.Database
 
             await Task.WhenAll(tasks);
 
+            await SaveChangesAsync();
+
             return result;
         }
     }

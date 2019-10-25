@@ -58,10 +58,10 @@ namespace ContentWatcherBot.Database
             //Filter out previous content
             var newContentKeysEnumerable = content.Keys.Except(PreviousContentIds);
             var newContentKeys = newContentKeysEnumerable as string[] ?? newContentKeysEnumerable.ToArray();
-            //Update _previousContent if needed
+            //Update PreviousContentIds if needed
             if (newContentKeys.Any())
             {
-                PreviousContentIds = newContentKeys.ToHashSet();
+                PreviousContentIds = content.Keys.ToHashSet();
             }
 
             return newContentKeys.Select(key => content[key]);
