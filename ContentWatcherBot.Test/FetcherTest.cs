@@ -34,5 +34,29 @@ namespace ContentWatcherBot.Test
             Assert.Contains("http://www.example.org/actu1", result.Content.Values);
         }
         
+        [Test]
+        public async Task MangadexFetcher()
+        {
+            //Mock
+            var mockHttp = new MockHttpMessageHandler();
+            mockHttp.Expect("https://mangadex.org/api/manga/123")
+                .Respond("application/json", MangadexManga1.Value);
+            Helpers.MockWatcherHttpClient(mockHttp);
+
+            //Fetcher
+            var result = await Fetchers.MangadexFetcher.FetchContent("123");
+
+            //Title
+            Assert.AreEqual("Beast Complex", result.Title);
+
+            //Description
+            Assert.AreEqual("A collection of short stories that involve anthropomorphic animals and their troubles with coexisting with different species. Itagaki Paru's debut manga.", result.Description);
+
+            //Content
+            Assert.AreEqual(2, result.Content.Count);
+            Assert.Contains("132633", result.Content.Keys);
+            Assert.Contains("https://mangadex.org/chapter/132636", result.Content.Values);
+        }
+        
     }
 }

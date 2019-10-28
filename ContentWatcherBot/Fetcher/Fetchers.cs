@@ -27,7 +27,8 @@ namespace ContentWatcherBot.Fetcher
 
     public enum FetcherType
     {
-        RssFeed
+        RssFeed,
+        Mangadex
     }
 
     public static class Fetchers
@@ -36,10 +37,12 @@ namespace ContentWatcherBot.Fetcher
         public static HttpClient HttpClient => _httpClient;
 
         public static readonly RssFeedFetcher RssFeedFetcher = new RssFeedFetcher();
+        public static readonly MangadexFetcher MangadexFetcher = new MangadexFetcher();
 
         private static readonly Dictionary<FetcherType, IFetcher> FetchersDict = new Dictionary<FetcherType, IFetcher>
         {
-            [FetcherType.RssFeed] = RssFeedFetcher
+            [FetcherType.RssFeed] = RssFeedFetcher,
+            [FetcherType.Mangadex] = MangadexFetcher
         };
 
         public static Task<FetchResult> Fetch(FetcherType type, string param)

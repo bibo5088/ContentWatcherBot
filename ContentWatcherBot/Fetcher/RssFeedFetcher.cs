@@ -12,6 +12,7 @@ namespace ContentWatcherBot.Fetcher
         public async Task<FetchResult> FetchContent(string url)
         {
             using var rss = await Fetchers.HttpClient.GetAsync(url);
+            rss.EnsureSuccessStatusCode();
             var doc = new XmlDocument();
             doc.LoadXml(await rss.Content.ReadAsStringAsync());
 
