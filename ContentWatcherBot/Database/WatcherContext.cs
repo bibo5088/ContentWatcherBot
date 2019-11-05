@@ -131,6 +131,9 @@ namespace ContentWatcherBot.Database
         {
             var tasks = Watchers.AsEnumerable().Select(watcher => watcher.NewContent());
             await Task.WhenAll(tasks);
+            
+            //Save previousIds
+            await SaveChangesAsync();
         }
     }
 }
