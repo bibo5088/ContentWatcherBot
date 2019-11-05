@@ -15,7 +15,11 @@ namespace ContentWatcherBot.Database
             var mangadexWatcher = await CreateMangadexWatcher(url);
             if (mangadexWatcher.IsSpecified) return mangadexWatcher.Value;
 
-            //RssWatcher
+            //ItchIo
+            var itchIoWatcher = await CreateItchIoWatcher(url);
+            if (itchIoWatcher.IsSpecified) return itchIoWatcher.Value;
+
+            //RssFeed
             var rssWatcher = await CreateRssWatcher(url);
             if (rssWatcher.IsSpecified) return rssWatcher.Value;
 
@@ -23,7 +27,8 @@ namespace ContentWatcherBot.Database
             throw new UnknownWatcherUrl(url);
         }
 
-        private static readonly Regex MangadexUrlRegex = new Regex(@"^https?:\/\/mangadex\.(?:org|com)\/title\/(\d+)\/?",
+        private static readonly Regex MangadexUrlRegex = new Regex(
+            @"^https?:\/\/mangadex\.(?:org|com)\/title\/(\d+)\/?",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private static async Task<Optional<Watcher>> CreateMangadexWatcher(Uri url)
@@ -40,6 +45,31 @@ namespace ContentWatcherBot.Database
                 var mangaId = mangaIdGroup.Value;
                 var result = await Fetchers.MangadexFetcher.FetchContent(mangaId);
                 return new Watcher(FetcherType.Mangadex, url, mangaId, result.Title, result.Description,
+                    new HashSet<string>(result.Content.Keys));
+            }
+            catch
+            {
+                return Optional<Watcher>.Unspecified;
+            }
+        }
+
+        private static readonly Regex ItchIoUrlRegex = new Regex(@"^https?:\/\/\w+\.itch.io\/\w+?",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        private static async Task<Optional<Watcher>> CreateItchIoWatcher(Uri uri)
+        {
+            try
+            {
+                var url = uri.ToString();
+
+                //Regex Url
+                var match = ItchIoUrlRegex.Match(url);
+
+                //Url doesn't match
+                if (!match.Success) return Optional<Watcher>.Unspecified;
+
+                var result = await Fetchers.ItchIoFetcher.FetchContent(url);
+                return new Watcher(FetcherType.ItchIo, uri, url, result.Title, result.Description,
                     new HashSet<string>(result.Content.Keys));
             }
             catch

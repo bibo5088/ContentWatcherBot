@@ -33,7 +33,7 @@ namespace ContentWatcherBot.Test
             Assert.Contains("Sat, 07 Sep 2002 00:00:01 GMT", result.Content.Keys);
             Assert.Contains("http://www.example.org/actu1", result.Content.Values);
         }
-        
+
         [Test]
         public async Task MangadexFetcher()
         {
@@ -50,13 +50,39 @@ namespace ContentWatcherBot.Test
             Assert.AreEqual("Beast Complex", result.Title);
 
             //Description
-            Assert.AreEqual("A collection of short stories that involve anthropomorphic animals and their troubles with coexisting with different species. Itagaki Paru's debut manga.", result.Description);
+            Assert.AreEqual(
+                "A collection of short stories that involve anthropomorphic animals and their troubles with coexisting with different species. Itagaki Paru's debut manga.",
+                result.Description);
 
             //Content
             Assert.AreEqual(2, result.Content.Count);
             Assert.Contains("132633", result.Content.Keys);
             Assert.Contains("https://mangadex.org/chapter/132636", result.Content.Values);
         }
-        
+
+        [Test]
+        public async Task ItchIoFetcher()
+        {
+            //Mock
+            var mockHttp = new MockHttpMessageHandler();
+            mockHttp.Expect("https://terrycavanagh.itch.io/dicey-dungeons")
+                .Respond("text/html", ItchIo1.Value);
+            Helpers.MockWatcherHttpClient(mockHttp);
+
+            //Fetcher
+            var result = await Fetchers.ItchIoFetcher.FetchContent("https://terrycavanagh.itch.io/dicey-dungeons");
+
+            //Title
+            Assert.AreEqual("Dicey Dungeons", result.Title);
+
+            //Description
+            Assert.AreEqual("Become a giant walking dice and battle to the end of an ever-changing dungeon! Can you escape the cruel whims of Lady Luck?",
+                result.Description);
+
+            //Content
+            Assert.AreEqual(8, result.Content.Count);
+            Assert.Contains("28 October 2019 @ 18:24", result.Content.Keys);
+            Assert.Contains("https://terrycavanagh.itch.io/dicey-dungeons/devlog/106966/halloween-special", result.Content.Values);
+        }
     }
 }

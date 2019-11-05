@@ -7,6 +7,7 @@ using ContentWatcherBot.Database;
 using ContentWatcherBot.Test.MockResponses;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
+// ReSharper disable PossibleNullReferenceException
 
 namespace ContentWatcherBot.Test
 {
@@ -24,8 +25,20 @@ namespace ContentWatcherBot.Test
                 .GetField("MangadexUrlRegex", BindingFlags.Static | BindingFlags.NonPublic)
                 .GetValue(null);
 
-
             return regex.Match(url).Groups[1].Value;
+        }
+
+        [TestCase("https://dev.itch.io/game", ExpectedResult = true)]
+        [TestCase("http://123.itch.io/game/", ExpectedResult = true)]
+        [TestCase("https://dev.itch.io/", ExpectedResult = false)]
+        [TestCase("https://dev.itch.nope/haha", ExpectedResult = false)]
+        public bool ItchIoUrlRegex(string url)
+        {
+            var regex = (Regex) typeof(WatcherFactory)
+                .GetField("ItchIoUrlRegex", BindingFlags.Static | BindingFlags.NonPublic)
+                .GetValue(null);
+
+            return regex.Match(url).Success;
         }
     }
 }

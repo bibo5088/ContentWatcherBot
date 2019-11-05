@@ -129,9 +129,21 @@ namespace ContentWatcherBot.Database
 
         public async Task UpdateWatchers()
         {
-            var tasks = Watchers.AsEnumerable().Select(watcher => watcher.NewContent());
+            var newContentIgnoreExceptions = new Func<Watcher, Task>(async (watcher) =>
+            {
+                try
+                {
+                    await watcher.NewContent();
+                }
+                catch
+                {
+                    //Ignore
+                }
+            });
+
+            var tasks = Watchers.AsEnumerable().Select(watcher => newContentIgnoreExceptions(watcher));
             await Task.WhenAll(tasks);
-            
+
             //Save previousIds
             await SaveChangesAsync();
         }
