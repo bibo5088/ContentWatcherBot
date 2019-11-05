@@ -19,6 +19,14 @@ To watch for Beastars on #example-channel.
 watch!add https://mangadex.org/title/20523/beastars in channel #example-channel
 ```
 
+##### Itch.io
+Use the link of the game page.
+###### Example
+To watch for Dicey Dungeons on #example-channel.
+```
+watch!add https://terrycavanagh.itch.io/dicey-dungeons in channel #example-channel
+```
+
 ## List active watchers
 ```
 watch!list
