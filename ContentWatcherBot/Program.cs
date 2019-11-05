@@ -23,7 +23,13 @@ namespace ContentWatcherBot
             await commandHandler.Setup();
 
             await client.StartAsync();
-            
+
+            //Update previousIds
+            await using (var context = new WatcherContext())
+            {
+                await context.UpdateWatchers();
+            }
+
             Console.WriteLine("Bot is ready");
 
             await WatchLoop(client);

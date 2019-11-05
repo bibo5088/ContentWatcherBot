@@ -126,5 +126,11 @@ namespace ContentWatcherBot.Database
 
             return result;
         }
+
+        public async Task UpdateWatchers()
+        {
+            var tasks = Watchers.AsEnumerable().Select(watcher => watcher.NewContent());
+            await Task.WhenAll(tasks);
+        }
     }
 }

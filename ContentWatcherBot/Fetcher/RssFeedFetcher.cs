@@ -28,7 +28,7 @@ namespace ContentWatcherBot.Fetcher
             var items = channel.GetElementsByTagName("item");
 
             var content = items.Cast<XmlNode>()
-                .ToDictionary(node => node["pubDate"]?.InnerText ?? node["title"].InnerText,
+                .ToDictionary(node => node["guid"]?.InnerText ?? node["pubDate"]?.InnerText ?? node["title"].InnerText,
                     node => node["link"].InnerText);
 
             return new FetchResult(title, description, content);
