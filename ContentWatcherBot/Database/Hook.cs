@@ -1,6 +1,8 @@
+using ContentWatcherBot.Database.Watchers;
+
 namespace ContentWatcherBot.Database
 {
-    public class GuildWatcher
+    public class Hook
     {
         public int Id { get; set; }
 

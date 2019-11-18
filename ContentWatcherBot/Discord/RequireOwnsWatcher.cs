@@ -15,9 +15,9 @@ namespace ContentWatcherBot.Discord
             try
             {
                 await using var db = new WatcherContext();
-                var guild = await db.Guilds.Include(g => g.GuildWatchers)
+                var guild = await db.Guilds.Include(g => g.Hooks)
                     .SingleAsync(g => g.GuildId == context.Guild.Id);
-                guild.GuildWatchers.Single(gw => gw.Id == (int) value);
+                guild.Hooks.Single(gw => gw.Id == (int) value);
 
                 return PreconditionResult.FromSuccess();
             }

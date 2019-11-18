@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using ContentWatcherBot.Database.Watchers;
 using ContentWatcherBot.Fetcher;
 using Microsoft.EntityFrameworkCore;
 using ChannelMessages = System.Collections.Generic.IDictionary<ulong, System.Collections.Generic.IEnumerable<string>>;
@@ -14,7 +15,7 @@ namespace ContentWatcherBot.Database
     {
         public DbSet<Watcher> Watchers { get; set; }
         public DbSet<Guild> Guilds { get; set; }
-        public DbSet<GuildWatcher> GuildWatchers { get; set; }
+        public DbSet<Hook> GuildWatchers { get; set; }
 
         public WatcherContext()
         {
@@ -66,14 +67,14 @@ namespace ContentWatcherBot.Database
             });
         }
 
-        public async Task<GuildWatcher> AddGuildWatcher(Guild guild, Watcher watcher, ulong channelId,
+        public async Task<Hook> AddGuildWatcher(Guild guild, Watcher watcher, ulong channelId,
             string updateMessage = null)
         {
             return await GuildWatchers.SingleOrCreateAsync(sw =>
                 sw.GuildId == guild.Id && sw.WatcherId == watcher.Id && sw.ChannelId == channelId, async () =>
             {
                 //Create new serverWatcher
-                var guildWatcher = new GuildWatcher
+                var guildWatcher = new Hook
                 {
                     Guild = guild, Watcher = watcher,
                     ChannelId = channelId,
@@ -97,7 +98,7 @@ namespace ContentWatcherBot.Database
                 {
                     var content = (await watcher.NewContent()).ToArray();
 
-                    foreach (var guildWatcher in watcher.GuildWatchers)
+                    foreach (var guildWatcher in watcher.Hooks)
                     {
                         //Add UpdateMessage
                         var contentWithMessages = content.Select(c => $"{guildWatcher.UpdateMessage}\n{c}").ToList();
@@ -117,7 +118,7 @@ namespace ContentWatcherBot.Database
             });
 
             //Execute tasks
-            var tasks = Watchers.Include(w => w.GuildWatchers).AsEnumerable().Select(watcher => process(watcher));
+            var tasks = Watchers.Include(w => w.Hooks).AsEnumerable().Select(watcher => process(watcher));
 
             await Task.WhenAll(tasks);
 

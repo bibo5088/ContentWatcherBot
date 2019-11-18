@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ContentWatcherBot.Database.Watchers;
 using ContentWatcherBot.Fetcher;
 using Discord;
 

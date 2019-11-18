@@ -33,7 +33,7 @@ namespace ContentWatcherBot.Discord.Commands
             }
         }
 
-        private async Task SendList(IEnumerable<GuildWatcher> guildWatchers)
+        private async Task SendList(IEnumerable<Hook> guildWatchers)
         {
             var builder = new EmbedBuilder();
 

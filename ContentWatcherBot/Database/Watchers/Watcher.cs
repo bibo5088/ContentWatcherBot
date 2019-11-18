@@ -1,47 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ContentWatcherBot.Fetcher;
 
-namespace ContentWatcherBot.Database
+namespace ContentWatcherBot.Database.Watchers
 {
-    public class Watcher
+    public abstract class Watcher
     {
+        public static HttpClient HttpClient = new HttpClient();
+
         public int Id { get; set; }
-
-        public FetcherType Type { get; private set; }
-
-        public Uri Url { get; private set; }
-
-        public string Param { get; private set; }
-
+        public abstract FetcherType Type { get; }
         public string Title { get; private set; }
         public string Description { get; private set; }
-
-        public List<GuildWatcher> GuildWatchers { get; private set; }
 
         /// <summary>
         /// Previous fetched IDs, used to detect new content
         /// </summary>
         public HashSet<string> PreviousContentIds { get; private set; }
 
-        public Watcher(FetcherType type, Uri url, string param, string title, string description,
-            HashSet<string> previousContentIds)
-        {
-            Type = type;
-            Url = url;
-            Param = param;
-            Title = title;
-            Description = description;
-            PreviousContentIds = previousContentIds;
-        }
+        public List<Hook> Hooks { get; private set; }
+
+        protected abstract Task<FetchResult> Fetch();
 
         private async Task<Dictionary<string, string>> FetchContent()
         {
-            var result = await Fetchers.Fetch(Type, Param);
+            var result = await Fetch();
             Title = result.Title;
             Description = result.Description;
             return result.Content;
@@ -65,6 +50,20 @@ namespace ContentWatcherBot.Database
             }
 
             return newContentKeys.Select(key => content[key]);
+        }
+    }
+
+    public struct FetchResult
+    {
+        public readonly string Title;
+        public readonly string Description;
+        public readonly Dictionary<string, string> Content;
+
+        public FetchResult(string title, string description, Dictionary<string, string> content)
+        {
+            Title = title;
+            Description = description;
+            Content = content;
         }
     }
 }
