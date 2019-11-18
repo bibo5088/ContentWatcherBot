@@ -35,7 +35,7 @@ namespace ContentWatcherBot.Database.Watchers
 
         public List<Hook> Hooks { get; private set; }
 
-        protected abstract Task<FetchResult> Fetch();
+        public abstract Task<FetchResult> Fetch();
 
         private async Task<Dictionary<string, string>> FetchContent()
         {

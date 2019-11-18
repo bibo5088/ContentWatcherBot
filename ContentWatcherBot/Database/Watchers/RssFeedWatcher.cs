@@ -17,7 +17,7 @@ namespace ContentWatcherBot.Database.Watchers
             Type = WatcherType.RssFeed;
         }
 
-        protected override async Task<FetchResult> Fetch()
+        public override async Task<FetchResult> Fetch()
         {
             using var rss = await HttpClient.GetAsync(Url);
             rss.EnsureSuccessStatusCode();

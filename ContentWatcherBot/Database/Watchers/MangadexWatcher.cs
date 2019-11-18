@@ -18,7 +18,7 @@ namespace ContentWatcherBot.Database.Watchers
             MangaId = mangaId;
         }
 
-        protected override async Task<FetchResult> Fetch()
+        public override async Task<FetchResult> Fetch()
         {
             using var response = await HttpClient.GetAsync($"https://mangadex.org/api/manga/{MangaId}");
             response.EnsureSuccessStatusCode();

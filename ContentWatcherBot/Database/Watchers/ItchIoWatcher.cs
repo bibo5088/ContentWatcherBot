@@ -18,7 +18,7 @@ namespace ContentWatcherBot.Database.Watchers
             Type = WatcherType.ItchIo;
         }
 
-        protected override async Task<FetchResult> Fetch()
+        public override async Task<FetchResult> Fetch()
         {
             using var response = await HttpClient.GetAsync(Url);
             response.EnsureSuccessStatusCode();
