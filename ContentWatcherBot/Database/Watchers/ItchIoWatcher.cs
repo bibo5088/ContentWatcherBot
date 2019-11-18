@@ -1,16 +1,26 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 
-namespace ContentWatcherBot.Fetcher
+namespace ContentWatcherBot.Database.Watchers
 {
-    public class ItchIoFetcher : IFetcher
+    public class ItchIoWatcher : UrlWatcher
     {
-        public async Task<FetchResult> FetchContent(string url)
+        private ItchIoWatcher()
         {
-            using var response = await Fetchers.HttpClient.GetAsync(url);
+            Type = WatcherType.ItchIo;
+        }
+        public ItchIoWatcher(Uri url) : base(url)
+        {
+            Type = WatcherType.ItchIo;
+        }
+
+        public override async Task<FetchResult> Fetch()
+        {
+            using var response = await HttpClient.GetAsync(Url);
             response.EnsureSuccessStatusCode();
             var parser = new HtmlParser();
             var doc = parser.ParseDocument(await response.Content.ReadAsStreamAsync());

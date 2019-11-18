@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using ContentWatcherBot.Database;
+using ContentWatcherBot.Database.Watchers;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -18,10 +19,10 @@ namespace ContentWatcherBot.Discord.Commands
             SocketGuildChannel channel)
         {
             await using var context = new WatcherContext();
-            var watcher = await context.AddWatcher(url);
+            var watcher = await context.AddWatcher(WatcherFactory.PickWatcher(url));
             var server = await context.AddGuild(Context.Guild.Id);
 
-            await context.AddGuildWatcher(server, watcher, channel.Id);
+            await context.AddHook(server, watcher, channel.Id);
 
             await Context.Message.Channel.SendMessageAsync($"Watching <{url}> in channel <#{channel.Id}>");
         }

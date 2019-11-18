@@ -17,7 +17,7 @@ namespace ContentWatcherBot.Discord.Commands
             int id, [Remainder] string message)
         {
             await using var context = new WatcherContext();
-            var guildWatcher = await context.GuildWatchers.SingleAsync(gw => gw.Id == id);
+            var guildWatcher = await context.Hooks.SingleAsync(gw => gw.Id == id);
 
             guildWatcher.UpdateMessage = message;
 

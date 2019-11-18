@@ -17,7 +17,7 @@ namespace ContentWatcherBot.Discord.Commands
         {
             await using var context = new WatcherContext();
 
-            var guildWatchers = context.GuildWatchers.Where(gw => gw.Guild.GuildId == Context.Guild.Id)
+            var guildWatchers = context.Hooks.Where(gw => gw.Guild.GuildId == Context.Guild.Id)
                 .Include(gw => gw.Watcher).ToArray();
 
             //Send default message if there is no watcher
@@ -33,7 +33,7 @@ namespace ContentWatcherBot.Discord.Commands
             }
         }
 
-        private async Task SendList(IEnumerable<GuildWatcher> guildWatchers)
+        private async Task SendList(IEnumerable<Hook> guildWatchers)
         {
             var builder = new EmbedBuilder();
 

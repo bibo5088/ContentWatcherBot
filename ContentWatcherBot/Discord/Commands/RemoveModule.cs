@@ -16,8 +16,8 @@ namespace ContentWatcherBot.Discord.Commands
             int id)
         {
             await using var context = new WatcherContext();
-            var guildWatcher = await context.GuildWatchers.SingleAsync(gw => gw.Id == id);
-            context.GuildWatchers.Remove(guildWatcher);
+            var guildWatcher = await context.Hooks.SingleAsync(gw => gw.Id == id);
+            context.Hooks.Remove(guildWatcher);
 
             await context.SaveChangesAsync();
 

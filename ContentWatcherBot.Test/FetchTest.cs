@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using ContentWatcherBot.Fetcher;
+using ContentWatcherBot.Database.Watchers;
 using ContentWatcherBot.Test.MockResponses;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
@@ -8,7 +8,7 @@ using RichardSzalay.MockHttp;
 namespace ContentWatcherBot.Test
 {
     [TestFixture]
-    public class FetcherTest
+    public class FetchTest
     {
         [Test]
         public async Task RssFeedFetcher()
@@ -19,8 +19,9 @@ namespace ContentWatcherBot.Test
                 .Respond("application/rss+xml", ExampleRssFeed1Xml.Value);
             Helpers.MockWatcherHttpClient(mockHttp);
 
-            //Fetcher
-            var result = await Fetchers.RssFeedFetcher.FetchContent("http://rss.com/feed");
+            //Fetch
+            var watcher = new RssFeedWatcher(new Uri("http://rss.com/feed"));
+            var result = await watcher.Fetch();
 
             //Title
             Assert.AreEqual("Mon site", result.Title);
@@ -43,8 +44,9 @@ namespace ContentWatcherBot.Test
                 .Respond("application/json", MangadexManga1.Value);
             Helpers.MockWatcherHttpClient(mockHttp);
 
-            //Fetcher
-            var result = await Fetchers.MangadexFetcher.FetchContent("123");
+            //Fetch
+            var watcher = new MangadexWatcher("123");
+            var result = await watcher.Fetch();
 
             //Title
             Assert.AreEqual("Beast Complex", result.Title);
@@ -69,20 +71,23 @@ namespace ContentWatcherBot.Test
                 .Respond("text/html", ItchIo1.Value);
             Helpers.MockWatcherHttpClient(mockHttp);
 
-            //Fetcher
-            var result = await Fetchers.ItchIoFetcher.FetchContent("https://terrycavanagh.itch.io/dicey-dungeons");
+            //Fetch
+            var watcher = new ItchIoWatcher(new Uri("https://terrycavanagh.itch.io/dicey-dungeons"));
+            var result = await watcher.Fetch();
 
             //Title
             Assert.AreEqual("Dicey Dungeons", result.Title);
 
             //Description
-            Assert.AreEqual("Become a giant walking dice and battle to the end of an ever-changing dungeon! Can you escape the cruel whims of Lady Luck?",
+            Assert.AreEqual(
+                "Become a giant walking dice and battle to the end of an ever-changing dungeon! Can you escape the cruel whims of Lady Luck?",
                 result.Description);
 
             //Content
             Assert.AreEqual(8, result.Content.Count);
             Assert.Contains("28 October 2019 @ 18:24", result.Content.Keys);
-            Assert.Contains("https://terrycavanagh.itch.io/dicey-dungeons/devlog/106966/halloween-special", result.Content.Values);
+            Assert.Contains("https://terrycavanagh.itch.io/dicey-dungeons/devlog/106966/halloween-special",
+                result.Content.Values);
         }
     }
 }

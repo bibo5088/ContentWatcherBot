@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace ContentWatcherBot.Database
@@ -9,6 +8,6 @@ namespace ContentWatcherBot.Database
 
         public ulong GuildId { get; set; }
 
-        public List<GuildWatcher> GuildWatchers { get; set; }
+        public List<Hook> Hooks { get; set; }
     }
 }

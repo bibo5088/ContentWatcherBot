@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ContentWatcherBot.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,7 +12,7 @@ namespace ContentWatcherBot.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     GuildId = table.Column<ulong>(nullable: false)
                 },
                 constraints: table =>
@@ -24,13 +25,14 @@ namespace ContentWatcherBot.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Type = table.Column<int>(nullable: false),
-                    Url = table.Column<string>(nullable: true),
-                    Param = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    PreviousContentIds = table.Column<string>(nullable: true)
+                    PreviousContentIds = table.Column<string>(nullable: true),
+                    HashCode = table.Column<int>(nullable: false),
+                    Url = table.Column<string>(nullable: true),
+                    MangaId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -38,26 +40,27 @@ namespace ContentWatcherBot.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GuildWatchers",
+                name: "Hooks",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     ChannelId = table.Column<ulong>(nullable: false),
+                    UpdateMessage = table.Column<string>(nullable: true),
                     GuildId = table.Column<int>(nullable: false),
                     WatcherId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GuildWatchers", x => x.Id);
+                    table.PrimaryKey("PK_Hooks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GuildWatchers_Guilds_GuildId",
+                        name: "FK_Hooks_Guilds_GuildId",
                         column: x => x.GuildId,
                         principalTable: "Guilds",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GuildWatchers_Watchers_WatcherId",
+                        name: "FK_Hooks_Watchers_WatcherId",
                         column: x => x.WatcherId,
                         principalTable: "Watchers",
                         principalColumn: "Id",
@@ -65,20 +68,20 @@ namespace ContentWatcherBot.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_GuildWatchers_GuildId",
-                table: "GuildWatchers",
+                name: "IX_Hooks_GuildId",
+                table: "Hooks",
                 column: "GuildId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GuildWatchers_WatcherId",
-                table: "GuildWatchers",
+                name: "IX_Hooks_WatcherId",
+                table: "Hooks",
                 column: "WatcherId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "GuildWatchers");
+                name: "Hooks");
 
             migrationBuilder.DropTable(
                 name: "Guilds");

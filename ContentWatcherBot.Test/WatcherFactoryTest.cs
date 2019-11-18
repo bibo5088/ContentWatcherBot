@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ContentWatcherBot.Database;
+using ContentWatcherBot.Database.Watchers;
 using ContentWatcherBot.Test.MockResponses;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;

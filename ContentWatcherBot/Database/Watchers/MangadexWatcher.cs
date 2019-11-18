@@ -2,13 +2,25 @@
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace ContentWatcherBot.Fetcher
+namespace ContentWatcherBot.Database.Watchers
 {
-    public class MangadexFetcher : IFetcher
+    public class MangadexWatcher : Watcher
     {
-        public async Task<FetchResult> FetchContent(string mangaId)
+        public string MangaId { get; private set; }
+
+        private MangadexWatcher()
         {
-            using var response = await Fetchers.HttpClient.GetAsync($"https://mangadex.org/api/manga/{mangaId}");
+            Type = WatcherType.RssFeed;
+        }
+
+        public MangadexWatcher(string mangaId) : this()
+        {
+            MangaId = mangaId;
+        }
+
+        public override async Task<FetchResult> Fetch()
+        {
+            using var response = await HttpClient.GetAsync($"https://mangadex.org/api/manga/{MangaId}");
             response.EnsureSuccessStatusCode();
             var doc = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
 
@@ -27,6 +39,11 @@ namespace ContentWatcherBot.Fetcher
                 .ToDictionary(chapter => chapter.Name, chapter => $"https://mangadex.org/chapter/{chapter.Name}");
 
             return new FetchResult(title, description, content);
+        }
+
+        public override int GetHashCode()
+        {
+            return Type.GetHashCode() ^ MangaId.GetHashCode();
         }
     }
 }

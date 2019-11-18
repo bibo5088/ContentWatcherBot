@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ContentWatcherBot.Database;
+using ContentWatcherBot.Database.Watchers;
 using ContentWatcherBot.Test.MockResponses;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
@@ -29,7 +30,8 @@ namespace ContentWatcherBot.Test
             Helpers.MockWatcherHttpClient(mockHttp);
 
             //Watcher
-            var watcher = await WatcherFactory.CreateWatcher(new Uri("http://rss.com/feed"));
+            var watcher = WatcherFactory.PickWatcher(new Uri("http://rss.com/feed"));
+            await watcher.FirstFetch();
 
             Assert.AreEqual("Mon site", watcher.Title);
             Assert.AreEqual("Ceci est un exemple de flux RSS 2.0", watcher.Description);
@@ -61,7 +63,8 @@ namespace ContentWatcherBot.Test
             Helpers.MockWatcherHttpClient(mockHttp);
 
             //Watcher
-            var watcher = await WatcherFactory.CreateWatcher(new Uri("https://mangadex.org/title/123/"));
+            var watcher = WatcherFactory.PickWatcher(new Uri("https://mangadex.org/title/123/"));
+            await watcher.FirstFetch();
 
             Assert.AreEqual("Beast Complex", watcher.Title);
             Assert.AreEqual(

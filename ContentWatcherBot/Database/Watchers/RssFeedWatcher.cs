@@ -1,17 +1,25 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace ContentWatcherBot.Fetcher
+namespace ContentWatcherBot.Database.Watchers
 {
-    public class RssFeedFetcher : IFetcher
+    public class RssFeedWatcher : UrlWatcher
     {
-        public async Task<FetchResult> FetchContent(string url)
+        private RssFeedWatcher()
         {
-            using var rss = await Fetchers.HttpClient.GetAsync(url);
+            Type = WatcherType.RssFeed;
+        }
+
+        public RssFeedWatcher(Uri url) : base(url)
+        {
+            Type = WatcherType.RssFeed;
+        }
+
+        public override async Task<FetchResult> Fetch()
+        {
+            using var rss = await HttpClient.GetAsync(Url);
             rss.EnsureSuccessStatusCode();
             var doc = new XmlDocument();
             doc.LoadXml(await rss.Content.ReadAsStringAsync());
@@ -19,10 +27,10 @@ namespace ContentWatcherBot.Fetcher
             var channel = doc["rss"]["channel"];
 
             //Title
-            var title = channel["title"]?.InnerText ?? url;
+            var title = channel["title"]?.InnerText ?? Url.ToString();
 
             //Description
-            var description = channel["description"]?.InnerText ?? $"RSS feed {url}";
+            var description = channel["description"]?.InnerText ?? $"RSS feed {Url}";
 
             //Content
             var items = channel.GetElementsByTagName("item");
