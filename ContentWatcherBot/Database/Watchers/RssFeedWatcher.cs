@@ -2,16 +2,19 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
-using ContentWatcherBot.Fetcher;
 
 namespace ContentWatcherBot.Database.Watchers
 {
     public class RssFeedWatcher : UrlWatcher
     {
-        public override FetcherType Type => FetcherType.RssFeed;
+        private RssFeedWatcher()
+        {
+            Type = WatcherType.RssFeed;
+        }
 
         public RssFeedWatcher(Uri url) : base(url)
         {
+            Type = WatcherType.RssFeed;
         }
 
         protected override async Task<FetchResult> Fetch()

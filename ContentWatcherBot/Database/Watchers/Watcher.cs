@@ -1,17 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using ContentWatcherBot.Fetcher;
 
 namespace ContentWatcherBot.Database.Watchers
 {
+    public enum WatcherType
+    {
+        RssFeed,
+        Mangadex,
+        ItchIo
+    }
+
     public abstract class Watcher
     {
         public static HttpClient HttpClient = new HttpClient();
 
         public int Id { get; set; }
-        public abstract FetcherType Type { get; }
+        public WatcherType Type { get; protected set; }
         public string Title { get; private set; }
         public string Description { get; private set; }
 
@@ -19,6 +26,12 @@ namespace ContentWatcherBot.Database.Watchers
         /// Previous fetched IDs, used to detect new content
         /// </summary>
         public HashSet<string> PreviousContentIds { get; private set; }
+
+        public int HashCode
+        {
+            get => GetHashCode();
+            private set {}
+        }
 
         public List<Hook> Hooks { get; private set; }
 
@@ -50,6 +63,14 @@ namespace ContentWatcherBot.Database.Watchers
             }
 
             return newContentKeys.Select(key => content[key]);
+        }
+        
+        public async Task FirstFetch()
+        {
+            var result = await Fetch();
+            Title = result.Title;
+            Description = result.Description;
+            PreviousContentIds = result.Content.Keys.ToHashSet();
         }
     }
 

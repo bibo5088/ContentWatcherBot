@@ -4,16 +4,18 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
-using ContentWatcherBot.Fetcher;
 
 namespace ContentWatcherBot.Database.Watchers
 {
     public class ItchIoWatcher : UrlWatcher
     {
-        public override FetcherType Type => FetcherType.ItchIo;
-
+        private ItchIoWatcher()
+        {
+            Type = WatcherType.ItchIo;
+        }
         public ItchIoWatcher(Uri url) : base(url)
         {
+            Type = WatcherType.ItchIo;
         }
 
         protected override async Task<FetchResult> Fetch()

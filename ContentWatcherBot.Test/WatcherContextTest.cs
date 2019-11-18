@@ -72,7 +72,7 @@ namespace ContentWatcherBot.Test
             _context.Guilds.Add(guild);
 
             //ServerWatcher
-            await _context.AddGuildWatcher(guild, watcher, 123);
+            await _context.AddHook(guild, watcher, 123);
 
             await _context.SaveChangesAsync();
 

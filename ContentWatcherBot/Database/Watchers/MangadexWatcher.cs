@@ -1,16 +1,19 @@
 ﻿using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using ContentWatcherBot.Fetcher;
 
 namespace ContentWatcherBot.Database.Watchers
 {
     public class MangadexWatcher : Watcher
     {
-        public override FetcherType Type => FetcherType.RssFeed;
-        public string MangaId { get; }
+        public string MangaId { get; private set; }
 
-        public MangadexWatcher(string mangaId)
+        private MangadexWatcher()
+        {
+            Type = WatcherType.RssFeed;
+        }
+
+        public MangadexWatcher(string mangaId) : this()
         {
             MangaId = mangaId;
         }
@@ -36,6 +39,11 @@ namespace ContentWatcherBot.Database.Watchers
                 .ToDictionary(chapter => chapter.Name, chapter => $"https://mangadex.org/chapter/{chapter.Name}");
 
             return new FetchResult(title, description, content);
+        }
+
+        public override int GetHashCode()
+        {
+            return Type.GetHashCode() ^ MangaId.GetHashCode();
         }
     }
 }

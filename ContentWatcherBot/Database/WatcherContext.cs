@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using ContentWatcherBot.Database.Watchers;
-using ContentWatcherBot.Fetcher;
 using Microsoft.EntityFrameworkCore;
 using ChannelMessages = System.Collections.Generic.IDictionary<ulong, System.Collections.Generic.IEnumerable<string>>;
 
@@ -15,7 +14,7 @@ namespace ContentWatcherBot.Database
     {
         public DbSet<Watcher> Watchers { get; set; }
         public DbSet<Guild> Guilds { get; set; }
-        public DbSet<Hook> GuildWatchers { get; set; }
+        public DbSet<Hook> Hooks { get; set; }
 
         public WatcherContext()
         {
@@ -27,10 +26,13 @@ namespace ContentWatcherBot.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlite("Data Source=database.sqlite;");
-            }
+            if (optionsBuilder.IsConfigured) return;
+
+            var server = Environment.GetEnvironmentVariable("DB_SERVER");
+            var name = Environment.GetEnvironmentVariable("DB_NAME");
+            var user = Environment.GetEnvironmentVariable("DB_USER");
+            var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
+            optionsBuilder.UseMySql($"Server={server};Database={name};Uid={user};Pwd={password};");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -41,13 +43,23 @@ namespace ContentWatcherBot.Database
                     v => JsonSerializer.Serialize(v, new JsonSerializerOptions {IgnoreNullValues = true}),
                     v => JsonSerializer.Deserialize<HashSet<string>>(v,
                         new JsonSerializerOptions {IgnoreNullValues = true}));
+
+            //Inheritance
+            modelBuilder.Entity<Watcher>().HasDiscriminator<WatcherType>(nameof(Watcher.Type))
+                .HasValue<MangadexWatcher>(WatcherType.Mangadex)
+                .HasValue<ItchIoWatcher>(WatcherType.ItchIo)
+                .HasValue<RssFeedWatcher>(WatcherType.RssFeed);
+
+            modelBuilder.Entity<MangadexWatcher>().HasBaseType<Watcher>();
+            modelBuilder.Entity<ItchIoWatcher>().HasBaseType<Watcher>();
+            modelBuilder.Entity<RssFeedWatcher>().HasBaseType<Watcher>();
         }
 
-        public async Task<Watcher> AddWatcher(Uri url)
+        public async Task<Watcher> AddWatcher(Watcher watcher)
         {
-            return await Watchers.SingleOrCreateAsync(w => w.Url.ToHttp() == url.ToHttp(), async () =>
+            return await Watchers.SingleOrCreateAsync(w => w.HashCode == watcher.GetHashCode(), async () =>
             {
-                var watcher = await WatcherFactory.CreateWatcher(url);
+                await watcher.FirstFetch();
                 await Watchers.AddAsync(watcher);
                 await SaveChangesAsync();
 
@@ -67,10 +79,10 @@ namespace ContentWatcherBot.Database
             });
         }
 
-        public async Task<Hook> AddGuildWatcher(Guild guild, Watcher watcher, ulong channelId,
+        public async Task<Hook> AddHook(Guild guild, Watcher watcher, ulong channelId,
             string updateMessage = null)
         {
-            return await GuildWatchers.SingleOrCreateAsync(sw =>
+            return await Hooks.SingleOrCreateAsync(sw =>
                 sw.GuildId == guild.Id && sw.WatcherId == watcher.Id && sw.ChannelId == channelId, async () =>
             {
                 //Create new serverWatcher
@@ -80,7 +92,7 @@ namespace ContentWatcherBot.Database
                     ChannelId = channelId,
                     UpdateMessage = updateMessage ?? $"New content from \"{watcher.Title}\""
                 };
-                await GuildWatchers.AddAsync(guildWatcher);
+                await Hooks.AddAsync(guildWatcher);
                 await SaveChangesAsync();
 
                 return guildWatcher;
