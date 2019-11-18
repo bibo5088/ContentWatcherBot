@@ -24,7 +24,7 @@ namespace ContentWatcherBot.Test
             //Empty tables
             _context.Guilds.RemoveRange(_context.Guilds);
             _context.Watchers.RemoveRange(_context.Watchers);
-            _context.GuildWatchers.RemoveRange(_context.GuildWatchers);
+            _context.Hooks.RemoveRange(_context.Hooks);
 
             _context.SaveChanges();
         }

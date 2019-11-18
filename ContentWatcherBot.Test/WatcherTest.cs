@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ContentWatcherBot.Database;
+using ContentWatcherBot.Database.Watchers;
 using ContentWatcherBot.Test.MockResponses;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
