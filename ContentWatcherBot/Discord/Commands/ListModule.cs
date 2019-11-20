@@ -17,17 +17,17 @@ namespace ContentWatcherBot.Discord.Commands
         {
             await using var context = new WatcherContext();
 
-            var guildWatchers = context.Hooks.Where(gw => gw.Guild.GuildId == Context.Guild.Id)
-                .Include(gw => gw.Watcher).ToArray();
+            var hook = context.Hooks.Where(h => h.Guild.GuildId == Context.Guild.Id)
+                .Include(h => h.Watcher).ToArray();
 
             //Send default message if there is no watcher
-            if (!guildWatchers.Any())
+            if (!hook.Any())
             {
                 await Context.Message.Channel.SendMessageAsync("There are no watchers active on this server");
                 return;
             }
 
-            foreach (var chunk in guildWatchers.Split(25))
+            foreach (var chunk in hook.Split(25))
             {
                 await SendList(chunk);
             }
@@ -37,15 +37,24 @@ namespace ContentWatcherBot.Discord.Commands
         {
             var builder = new EmbedBuilder();
 
-            foreach (var guildWatcher in guildWatchers)
+            foreach (var hook in guildWatchers)
             {
-                var watcher = guildWatcher.Watcher;
+                var watcher = hook.Watcher;
+
+                var desc =
+                    $"{watcher.Description}\nUpdate Message : {hook.UpdateMessage}\n<#{hook.ChannelId}>";
+
+                //Info if any
+                var info = watcher.Info();
+                if (info.Length > 0)
+                {
+                    desc += $"\n{info}";
+                }
 
                 builder.AddField(new EmbedFieldBuilder
                 {
-                    Name = $"{guildWatcher.Id} ({watcher.Type:G}) \"{watcher.Title}\"",
-                    Value =
-                        $"{watcher.Description}\nUpdate Message : {guildWatcher.UpdateMessage}\n<#{guildWatcher.ChannelId}>"
+                    Name = $"{hook.Id} ({watcher.Type:G}) \"{watcher.Title}\"",
+                    Value = desc
                 });
             }
 

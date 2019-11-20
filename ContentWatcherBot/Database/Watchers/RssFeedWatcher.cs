@@ -41,5 +41,10 @@ namespace ContentWatcherBot.Database.Watchers
 
             return new FetchResult(title, description, content);
         }
+        
+        public override Watcher Clone()
+        {
+            return new RssFeedWatcher(Url);
+        }
     }
 }
