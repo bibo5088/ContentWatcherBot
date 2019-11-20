@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using ContentWatcherBot.Database.Watchers;
 using Discord.Commands;
 
 namespace ContentWatcherBot
@@ -26,6 +27,14 @@ namespace ContentWatcherBot
     public class UnknownWatcherUrl : ReportableExceptions
     {
         public UnknownWatcherUrl(Uri url) : base($"Unable to watch {url}")
+        {
+        }
+    }
+
+    public class WrongWatcherType : ReportableExceptions
+    {
+        public WrongWatcherType(int id, WatcherType expectedType, WatcherType actualType) : base(
+            $"Wrong watcher type, expected {expectedType}, watcher {id} is {actualType}")
         {
         }
     }

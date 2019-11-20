@@ -30,7 +30,7 @@ namespace ContentWatcherBot.Database.Watchers
         public int HashCode
         {
             get => GetHashCode();
-            private set {}
+            private set { }
         }
 
         public List<Hook> Hooks { get; private set; }
@@ -64,13 +64,20 @@ namespace ContentWatcherBot.Database.Watchers
 
             return newContentKeys.Select(key => content[key]);
         }
-        
+
         public async Task FirstFetch()
         {
             var result = await Fetch();
             Title = result.Title;
             Description = result.Description;
             PreviousContentIds = result.Content.Keys.ToHashSet();
+        }
+
+        public abstract Watcher Clone();
+
+        public virtual string Info()
+        {
+            return "";
         }
     }
 

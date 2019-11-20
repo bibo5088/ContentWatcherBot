@@ -13,6 +13,7 @@ namespace ContentWatcherBot.Database.Watchers
         {
             Type = WatcherType.ItchIo;
         }
+
         public ItchIoWatcher(Uri url) : base(url)
         {
             Type = WatcherType.ItchIo;
@@ -41,6 +42,11 @@ namespace ContentWatcherBot.Database.Watchers
                 el => el.FindChild<IHtmlAnchorElement>().Href);
 
             return new FetchResult(title, description, content);
+        }
+
+        public override Watcher Clone()
+        {
+            return new ItchIoWatcher(Url);
         }
     }
 }

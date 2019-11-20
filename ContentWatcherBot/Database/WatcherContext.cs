@@ -130,7 +130,7 @@ namespace ContentWatcherBot.Database
             });
 
             //Execute tasks
-            var tasks = Watchers.Include(w => w.Hooks).AsEnumerable().Select(watcher => process(watcher));
+            var tasks = Watchers.Include(w => w.Hooks).Where(w => w.Hooks.Any()).AsEnumerable().Select(watcher => process(watcher));
 
             await Task.WhenAll(tasks);
 

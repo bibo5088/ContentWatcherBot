@@ -18,13 +18,20 @@ namespace ContentWatcherBot.Discord.Commands
             [Summary("The channel where the watcher will send messages")]
             SocketGuildChannel channel)
         {
-            await using var context = new WatcherContext();
-            var watcher = await context.AddWatcher(WatcherFactory.PickWatcher(url));
-            var server = await context.AddGuild(Context.Guild.Id);
+            try
+            {
+                await using var context = new WatcherContext();
+                var watcher = await context.AddWatcher(WatcherFactory.PickWatcher(url));
+                var server = await context.AddGuild(Context.Guild.Id);
 
-            await context.AddHook(server, watcher, channel.Id);
+                await context.AddHook(server, watcher, channel.Id);
 
-            await Context.Message.Channel.SendMessageAsync($"Watching <{url}> in channel <#{channel.Id}>");
+                await Context.Message.Channel.SendMessageAsync($"Watching <{url}> in channel <#{channel.Id}>");
+            }
+            catch
+            {
+                throw new UnknownWatcherUrl(url);
+            }
         }
     }
 }
