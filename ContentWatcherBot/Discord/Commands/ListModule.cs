@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace ContentWatcherBot.Discord.Commands
         {
             await using var context = new WatcherContext();
 
-            var hook = context.Hooks.Where(h => h.Guild.GuildId == Context.Guild.Id)
+            var hook = context.Hooks.AsQueryable().Where(h => h.Guild.GuildId == Context.Guild.Id)
                 .Include(h => h.Watcher).ToArray();
 
             //Send default message if there is no watcher
@@ -41,8 +42,11 @@ namespace ContentWatcherBot.Discord.Commands
             {
                 var watcher = hook.Watcher;
 
+                var shortenedWatcherDesc = watcher.Description.Length > 512
+                    ? watcher.Description.Substring(0, 512) + '…'
+                    : watcher.Description;
                 var desc =
-                    $"{watcher.Description}\nUpdate Message : {hook.UpdateMessage}\n<#{hook.ChannelId}>";
+                    $"{shortenedWatcherDesc}\nUpdate Message : {hook.UpdateMessage}\n<#{hook.ChannelId}>";
 
                 //Info if any
                 var info = watcher.Info();
